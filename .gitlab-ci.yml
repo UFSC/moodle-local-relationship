@@ -1,49 +1,51 @@
-language: php
+image: robertosilvino/moodle-php:5.6.02
 
-sudo: false
+services:
+ - mysql:5.6
 
 cache:
-  directories:
-    - $HOME/.composer/cache
+ paths:
+ - $HOME/.composer/cache
 
-php:
- # - 5.4
- - 5.5
- # - 5.6
- # - 7.0
+variables:
+ MOODLE_BRANCH: "MOODLE_30_STABLE"
+ DB: "mysqli"
+ MYSQL_ROOT_PASSWORD: "superrootpass"
+ TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
 
-#matrix:
-# allow_failures:
-#  - php: 7.0
-  
-env:
- global:
-  - MOODLE_BRANCH=MOODLE_30_STABLE
-  - DB=mysqli
-# matrix:
-#  - DB=pgsql MOODLE_BRANCH=MOODLE_29_STABLE
-#  - DB=pgsql MOODLE_BRANCH=MOODLE_30_STABLE
-#  - DB=mysqli MOODLE_BRANCH=MOODLE_29_STABLE
-#  - DB=mysqli MOODLE_BRANCH=MOODLE_30_STABLE
+before_script:
+ # Several tools complain about xdebug slowdown.
+ #- phpenv config-rm xdebug.ini
+ # Install php-gd
+ - apt-get update
+ - apt-get install -y git libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libicu-dev g++ mysql-client php5-mysql npm
+ - docker-php-ext-install -j$(nproc) iconv mcrypt intl zip mysqli
+ - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+ - docker-php-ext-install -j$(nproc) gd
+ #- locale-gen en_AU.UTF-8
+ # Install phpunit.
+ - curl -o /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
+ - chmod +x /usr/local/bin/phpunit
+ - cd ../..
+ # Install composer.
+ - curl -sS https://getcomposer.org/installer | php
+ - mv composer.phar /usr/local/bin/composer
+ - composer create-project -n --no-dev moodlerooms/moodle-plugin-ci ci ^1
+ - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+ - chmod u+x /builds/ci/bin/moodle-plugin-ci
+ - chmod u+x /builds/ci/bin/*
+ - umask u+x
+ - moodle-plugin-ci install --db-user=root --db-pass=superrootpass --db-host=mysql -vvv
 
-before_install:
-  - phpenv config-rm xdebug.ini
-  - cd ../..
-  - composer selfupdate
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^1
-  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-
-install:
-  - moodle-plugin-ci install
-
-script:
-  - moodle-plugin-ci phplint || true
-  - moodle-plugin-ci phpcpd || true
-  - moodle-plugin-ci phpmd || true
-  - moodle-plugin-ci codechecker || true
-  - moodle-plugin-ci csslint || true
-  - moodle-plugin-ci shifter || true
-  - moodle-plugin-ci jshint || true
-  - moodle-plugin-ci validate || true
-  - moodle-plugin-ci phpunit
-  - moodle-plugin-ci behat
+job1:
+ script:
+ - moodle-plugin-ci phplint || true
+ - moodle-plugin-ci phpcpd || true
+ - moodle-plugin-ci phpmd || true
+ - moodle-plugin-ci codechecker || true
+ - moodle-plugin-ci csslint || true
+ - moodle-plugin-ci shifter || true
+ - moodle-plugin-ci jshint || true
+ - moodle-plugin-ci validate || true
+ - moodle-plugin-ci phpunit
+ - moodle-plugin-ci behat
