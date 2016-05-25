@@ -50,6 +50,10 @@ class edit_group extends \moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'relationshipid');
         $mform->setType('relationshipid', PARAM_INT);
+        $mform->addElement('hidden', 'uniformdistribution');
+        $mform->setType('uniformdistribution', PARAM_INT);
+        $mform->addElement('hidden', 'timecreated');
+        $mform->setType('timecreated', PARAM_INT);
 
         $this->add_action_buttons();
 

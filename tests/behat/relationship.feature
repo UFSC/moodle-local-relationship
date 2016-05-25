@@ -1,4 +1,4 @@
-@relationship
+@local @local_relationship @javascript
 Feature: Manipulation of relationships
   In order to control usage of relationships
   As a user
@@ -42,17 +42,16 @@ Background:
 Scenario: Students cannot navigate to the relationship page
   When I log in as "student1"
   And I am on homepage
-  And I expand "My courses" node
   Then I should not see "Category 1"
-  When I click on "Course1" "link"
+  When I follow "Course1"
   Then I should not see "Relacionamentos"
 
 @javascript
 Scenario: Admin is able to see link to relationship
   When I log in as "admin"
   And I am on homepage
-  And I click on "Courses" "link"
-  And I click on "Category 1" "link"
+  And I follow "Courses"
+  And I follow "Category 1"
   Then I should see "Relacionamentos"
 
 @javascript
@@ -60,39 +59,25 @@ Scenario: User with capability is able to see link to relationship
   When I log in as "teacher1"
   And I am on homepage
   And I follow "Course1"
-  And I click on "Category 1" "link"
+  And I follow "Category 1"
   Then I should see "Relacionamentos"
-
-#@javascript @wip
-#Scenario: Students cannot access the relationships page through the url
-#  When I log in as "student1"
-#  And I am on homepage
-#  And I go to "http://150.162.242.121/mariana/unasus-cp/local/relationship/index.php?contextid=1"
-#  Then I should see "Usar relacionamentos e ver membros"
-
-@javascript
-Scenario: User with capability is able to access the relationships page through the url
-  When I log in as "teacher1"
-  And I am on homepage
-  And I go to "http://150.162.242.121/mariana/unasus-cp/local/relationship/index.php?contextid=17"
-  Then I should see "Relacionamentos" in the "h3" "css_element"
 
 @javascript
 Scenario: User with capability has access to the relationship creation and deletion feature
   When I log in as "teacher1"
   And I am on homepage
   And I follow "Course1"
-  And I click on "Category 1" "link"
-  And I click on "Relacionamentos" "link"
-  And I click on "Add" "button"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
   Then I should see "Adicionar novo relacionamento"
-  When I fill in "Nome" with "Teste 1"
-  And I fill in "Descrição" with "Descrição"
-  And I click on "Save changes" "button"
+  When I set the field "Nome" to "Teste 1"
+  And I set the field "Descrição" to "Descrição"
+  And I press "Save changes"
   Then I should see "Teste 1" in the "td" "css_element"
   And I should see "Criado manualmente"
-  When I click on "Delete" "link"
-  And I click on "Continue" "button"
+  When I follow "Delete"
+  And I press "Continue"
   Then I should not see "Teste 1" in the "td" "css_element"
   And I should not see "criado manualmente"
 
@@ -101,17 +86,17 @@ Scenario: User with capability has access to the relationship edition features
   Given I log in as "teacher1"
   And I am on homepage
   And I follow "Course1"
-  And I click on "Category 1" "link"
-  And I click on "Relacionamentos" "link"
-  And I click on "Add" "button"
-  And I fill in "Nome" with "Teste 1"
-  And I fill in "Descrição" with "Descrição"
-  And I click on "Save changes" "button"
-  When I click on "Edit" "link"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  And I set the field "Nome" to "Teste 1"
+  And I set the field "Descrição" to "Descrição"
+  And I press "Save changes"
+  When I follow "Edit"
   Then I should see "Editar relacionamento"
-  When I click on "Cancel" "button"
-  And I click on "Papeis e coortes" "link"
+  When I press "Cancel"
+  And I follow "Papeis e coortes"
   Then I should see "Papeis e coortes"
-  When I click on "Relacionamentos" "link"
-  When I click on "Groups" "link"
+  When I follow "Relacionamentos"
+  When I follow "Groups"
   Then I should see "Grupos" in the "h4" "css_element"

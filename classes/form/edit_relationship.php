@@ -49,6 +49,16 @@ class edit_relationship extends \moodleform {
         $mform->addElement('hidden', 'contextid');
         $mform->setType('contextid', PARAM_INT);
 
+
+        $mform->addElement('hidden', 'idnumber');
+        $mform->setType('idnumber', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'component');
+        $mform->setType('component', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'timecreated');
+        $mform->setType('timecreated', PARAM_INT);
+
         $this->add_action_buttons();
 
         $this->set_data($relationship);

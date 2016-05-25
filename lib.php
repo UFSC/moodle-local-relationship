@@ -318,43 +318,47 @@ function relationship_update_relationship($relationship) {
 function relationship_delete_relationship($relationship) {
     global $DB;
 
-    $relationshipgroups = $DB->get_records('relationship_groups', array('relationshipid' => $relationship->id));
-    foreach ($relationshipgroups AS $g) {
-        relationship_delete_group($g);
-    }
+    $cohorts = $DB->get_records('relationship_cohorts', array('relationshipid' => $relationship->id));
 
-    try {
-        $transaction = $DB->start_delegated_transaction();
+    if(count($cohorts) == 0) {
+
+        $relationshipgroups = $DB->get_records('relationship_groups', array('relationshipid' => $relationship->id));
+        foreach ($relationshipgroups AS $g) {
+            relationship_delete_group($g);
+        }
+
+        try {
+            $transaction = $DB->start_delegated_transaction();
 
 
-        $cohorts = $DB->get_records('relationship_cohorts', array('relationshipid' => $relationship->id));
 
-        if(count($cohorts) == 0) {
             $DB->delete_records('relationship_cohorts', array('relationshipid' => $relationship->id));
 
             $tags = tag_get_tags_array('relationship', $relationship->id);
-            tag_delete(array_keys($tags));
+            if (count($tags) > 0) {
+                tag_delete(array_keys($tags));
+            }
 
             $DB->delete_records('relationship', array('id' => $relationship->id));
 
             $transaction->allow_commit();
-        } else {
-            return -1;
+        } catch (Exception $e) {
+            $transaction->rollback($e);
+
+            return false;
         }
-    } catch (Exception $e) {
-        $transaction->rollback($e);
 
-        return false;
-    }
-
-    $event = \local_relationship\event\relationship_deleted::create(array(
+        $event = \local_relationship\event\relationship_deleted::create(array(
             'context' => context::instance_by_id($relationship->contextid),
             'objectid' => $relationship->id,
-    ));
-    $event->add_record_snapshot('relationship', $relationship);
-    $event->trigger();
+        ));
+        $event->add_record_snapshot('relationship', $relationship);
+        $event->trigger();
 
-    return true;
+        return true;
+    } else {
+        return -1;
+    }
 }
 
 //
@@ -475,7 +479,7 @@ function relationship_get_groups($relationshipid) {
     global $DB;
 
     $sql = "SELECT rg.*, (SELECT count(*)
-                            FROM relationship_members
+                            FROM {relationship_members}
                            WHERE relationshipgroupid = rg.id) as size
               FROM {relationship_groups} rg
              WHERE rg.relationshipid = :relationshipid

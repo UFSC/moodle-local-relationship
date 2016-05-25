@@ -87,8 +87,8 @@ foreach ($relationships['relationships'] as $relationship) {
     $line[] = format_string($relationship->name);
 
     $sql = "SELECT count(DISTINCT rm.userid)
-              FROM relationship_groups rg
-              JOIN relationship_members rm
+              FROM {relationship_groups} rg
+              JOIN {relationship_members} rm
                 ON (rm.relationshipgroupid = rg.id)
              WHERE rg.relationshipid = :relationshipid";
     $line[] = $DB->count_records_sql($sql, array('relationshipid' => $relationship->id));

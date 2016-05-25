@@ -103,10 +103,10 @@ echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 echo html_writer::table($table);
 if ($editable) {
     $sql = "SELECT rc.id, rc.roleid, count(*) AS count
-              FROM relationship_cohorts rc
-              JOIN cohort ch ON (ch.id = rc.cohortid)
-              JOIN cohort_members cm ON (cm.cohortid = ch.id)
-         LEFT JOIN relationship_members rm ON (rm.relationshipcohortid = rc.id AND rm.userid = cm.userid)
+              FROM {relationship_cohorts} rc
+              JOIN {cohort} ch ON (ch.id = rc.cohortid)
+              JOIN {cohort_members} cm ON (cm.cohortid = ch.id)
+         LEFT JOIN {relationship_members} rm ON (rm.relationshipcohortid = rc.id AND rm.userid = cm.userid)
              WHERE rc.relationshipid = :relationshipid
                AND rc.uniformdistribution = 1
                AND ISNULL(rm.userid)

@@ -39,13 +39,13 @@ before_script:
 
 job1:
  script:
- - moodle-plugin-ci phplint || true
- - moodle-plugin-ci phpcpd || true
- - moodle-plugin-ci phpmd || true
- - moodle-plugin-ci codechecker || true
- - moodle-plugin-ci csslint || true
- - moodle-plugin-ci shifter || true
- - moodle-plugin-ci jshint || true
- - moodle-plugin-ci validate || true
+ #- moodle-plugin-ci phplint || true
+ #- moodle-plugin-ci phpcpd || true
+ #- moodle-plugin-ci phpmd || true
+ #- moodle-plugin-ci codechecker || true
+ #- moodle-plugin-ci csslint || true
+ #- moodle-plugin-ci shifter || true
+ #- moodle-plugin-ci jshint || true
+ #- moodle-plugin-ci validate || true
  - moodle-plugin-ci phpunit
  - moodle-plugin-ci behat
