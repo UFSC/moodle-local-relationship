@@ -1,3 +1,12 @@
+[![Build Status](https://travis-ci.org/UFSC/moodle-local-relationship.svg?branch=master)](https://travis-ci.org/UFSC/moodle-local-relationship)
+[![Dependency Status](https://gemnasium.com/badges/github.com/UFSC/moodle-local-relationship.svg)](https://gemnasium.com/github.com/UFSC/moodle-local-relationship)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/UFSC/moodle-local-relationship/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/UFSC/moodle-local-relationship/?branch=master)
+[![ReviewNinja](https://app.review.ninja/54116132/badge)](https://app.review.ninja/UFSC/moodle-local-relationship)
+
+[![Test Coverage](https://codeclimate.com/github/UFSC/moodle-local-relationship/badges/coverage.svg)](https://codeclimate.com/github/UFSC/moodle-local-relationship/coverage)
+[![Code Climate](https://codeclimate.com/github/UFSC/moodle-local-relationship/badges/gpa.svg)](https://codeclimate.com/github/UFSC/moodle-local-relationship)
+[![Issue Count](https://codeclimate.com/github/UFSC/moodle-local-relationship/badges/issue_count.svg)](https://codeclimate.com/github/UFSC/moodle-local-relationship)
+
 Relationship
 ============
 
