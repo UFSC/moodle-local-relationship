@@ -40,6 +40,7 @@ class relationshipgroup_created extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'relationship_groups';
     }
 

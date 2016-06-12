@@ -40,6 +40,7 @@ class relationship_updated extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'relationship';
     }
 
