@@ -42,10 +42,17 @@ Background:
 Scenario: Students cannot navigate to the relationship page
   When I log in as "student1"
   And I am on homepage
-  And I expand "My courses" node
-  Then I should not see "Category 1"
-  When I click on "Course1" "link"
+  And I follow "Course1"
+  And I click on "Category 1" "link"
   Then I should not see "Relacionamentos"
+
+@javascript
+Scenario: Teachers are able to navigate in the relationship page
+  When I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I click on "Category 1" "link"
+  And I click on "Relacionamentos" "link"
 
 @javascript
 Scenario: Admin is able to see link to relationship
@@ -67,15 +74,8 @@ Scenario: User with capability is able to see link to relationship
 #Scenario: Students cannot access the relationships page through the url
 #  When I log in as "student1"
 #  And I am on homepage
-#  And I go to "http://150.162.242.121/mariana/unasus-cp/local/relationship/index.php?contextid=1"
+#  And I go to "http://150.162.242.121/mariana/unasus-cp/local/relationship             /index.php?contextid=1"
 #  Then I should see "Usar relacionamentos e ver membros"
-
-@javascript
-Scenario: User with capability is able to access the relationships page through the url
-  When I log in as "teacher1"
-  And I am on homepage
-  And I go to "http://150.162.242.121/mariana/unasus-cp/local/relationship/index.php?contextid=17"
-  Then I should see "Relacionamentos" in the "h3" "css_element"
 
 @javascript
 Scenario: User with capability has access to the relationship creation and deletion feature
@@ -115,3 +115,17 @@ Scenario: User with capability has access to the relationship edition features
   When I click on "Relacionamentos" "link"
   When I click on "Groups" "link"
   Then I should see "Grupos" in the "h4" "css_element"
+
+@javascript
+Scenario: Add a relationship with user with capability
+  When I log in as "admin"
+  And I am on homepage
+  And I follow "Courses"
+  And I click on "Category 1" "link"
+  And I click on "Relacionamentos" "link"
+  And I click on "Add" "button"
+  #And I click on "Adicionar novo relacionamento" "link"
+  And I set the field "Nome" to "Teste 1"
+  And I set the field "Descrição" to "Descrição"
+  #And I set the field "Tags" to "Tag1,Tag2"
+  And I press "Save changes"
