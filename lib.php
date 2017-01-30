@@ -265,7 +265,9 @@ function relationship_add_relationship($relationship) {
 
     if ($result) {
         $relationship->id = $result;
-        tag_set('relationship', $relationship->id, $relationship->tags);
+        if(isset($relationship->tags)) {
+            tag_set('relationship', $relationship->id, $relationship->tags);
+        }
 
         $event = \local_relationship\event\relationship_created::create(array(
                 'context' => context::instance_by_id($relationship->contextid),
