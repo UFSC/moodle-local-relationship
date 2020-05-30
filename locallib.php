@@ -224,7 +224,7 @@ function relationship_search_relationships($contextid, $page = 0, $perpage = 25,
     $totalrelationships = $DB->count_records_sql($countfields . $sql, $params);
     $relationships = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
     foreach($relationships as $rl) {
-        $rl->tags = tag_get_tags_array('relationship', $rl->id);
+        $rl->tags = core_tag_tag::get_item_tags_array('relationship', 'relationship', $rl->id);
     }
 
     return array('totalrelationships' => $totalrelationships, 'relationships' => $relationships, 'allrelationships'=>$allrelationships);

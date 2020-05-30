@@ -41,7 +41,7 @@ class edit_relationship extends \moodleform {
         $mform->addElement('editor', 'description_editor', get_string('description', 'local_relationship'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
 
-        $mform->addElement('tags', 'tags', get_string('tags'), array('display' => 'noofficial'));
+        $mform->addElement('tags', 'tags', get_string('tags'), array('itemtype' => 'relationship', 'component' => 'relationship'));
         $mform->setType('tags', PARAM_TEXT);
 
         $mform->addElement('hidden', 'id');

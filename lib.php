@@ -217,7 +217,7 @@ function relationship_get_relationship($relationshipid) {
     global $DB;
 
     $relationship = $DB->get_record('relationship', array('id' => $relationshipid), '*', MUST_EXIST);
-    $relationship->tags = tag_get_tags_array('relationship', $relationshipid);
+    $relationship->tags = core_tag_tag::get_item_tags_array('relationship', 'relationship', $relationshipid  );
 
     return $relationship;
 }
@@ -334,7 +334,7 @@ function relationship_delete_relationship($relationship) {
 
             $DB->delete_records('relationship_cohorts', array('relationshipid' => $relationship->id));
 
-            $tags = tag_get_tags_array('relationship', $relationship->id);
+            $tags = core_tag_tag::get_item_tags_array('relationship', 'relationship', $relationship->id);
             if (count($tags) > 0) {
                 tag_delete(array_keys($tags));
             }
