@@ -101,8 +101,8 @@ foreach ($relationships['relationships'] as $relationship) {
     } else {
         $line[] = $course_count;
     }
-
-    $line[] = implode(', ', $relationship->tags);
+    $relationship_tags = core_tag_tag::get_item_tags_array('local_relationship', 'relationship', $relationship->id);
+    $line[] = implode(', ', $relationship_tags);
     $line[] = empty($relationship->component) ? get_string('nocomponent', 'local_relationship') : get_string('pluginname', $relationship->component);
 
     $buttons = array();

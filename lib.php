@@ -217,7 +217,7 @@ function relationship_get_relationship($relationshipid) {
     global $DB;
 
     $relationship = $DB->get_record('relationship', array('id' => $relationshipid), '*', MUST_EXIST);
-    $relationship->tags = core_tag_tag::get_item_tags_array('relationship', 'relationship', $relationshipid  );
+    $relationship->tags = core_tag_tag::get_item_tags_array('local_relationship', 'relationship', $relationshipid);
 
     return $relationship;
 }
@@ -265,7 +265,11 @@ function relationship_add_relationship($relationship) {
 
     if ($result) {
         $relationship->id = $result;
-        tag_set('relationship', $relationship->id, $relationship->tags);
+        core_tag_tag::set_item_tags('local_relationship',
+            'relationship',
+            $relationship->id,
+            context::instance_by_id($relationship->contextid),
+            $relationship->tags) ;
 
         $event = \local_relationship\event\relationship_created::create(array(
                 'context' => context::instance_by_id($relationship->contextid),
@@ -293,7 +297,11 @@ function relationship_update_relationship($relationship) {
     $result = $DB->update_record('relationship', $relationship);
 
     if ($result) {
-        tag_set('relationship', $relationship->id, $relationship->tags);
+        core_tag_tag::set_item_tags('local_relationship',
+            'relationship',
+            $relationship->id,
+            context::instance_by_id($relationship->contextid),
+            $relationship->tags) ;
 
         $event = \local_relationship\event\relationship_updated::create(array(
                 'context' => context::instance_by_id($relationship->contextid),
@@ -333,11 +341,6 @@ function relationship_delete_relationship($relationship) {
 
 
             $DB->delete_records('relationship_cohorts', array('relationshipid' => $relationship->id));
-
-            $tags = core_tag_tag::get_item_tags_array('relationship', 'relationship', $relationship->id);
-            if (count($tags) > 0) {
-                tag_delete(array_keys($tags));
-            }
 
             $DB->delete_records('relationship', array('id' => $relationship->id));
 
