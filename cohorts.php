@@ -55,9 +55,9 @@ foreach ($relationshipcohorts as $rch) {
     if ($editable) {
         $buttons = array();
         $buttons[] = html_writer::link(new moodle_url('/local/relationship/edit_cohort.php', array('relationshipcohortid' => $rch->id, 'delete' => 1)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete'), 'title' => get_string('delete'), 'class' => 'iconsmall')));
+                html_writer::span($OUTPUT->pix_icon('t/delete', get_string('delete'), 'moodle', ['class' => 'iconsmall'])));
         $buttons[] = html_writer::link(new moodle_url('/local/relationship/edit_cohort.php', array('relationshipcohortid' => $rch->id)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' => get_string('edit'), 'title' => get_string('edit'), 'class' => 'iconsmall')));
+                html_writer::span($OUTPUT->pix_icon('t/edit', get_string('edit'), 'moodle', ['class' => 'iconsmall'])));
         $line[] = implode(' ', $buttons);
     }
 

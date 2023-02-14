@@ -37,4 +37,8 @@ $observers = array(
         'eventname' => ' \core\event\cohort_deleted',
         'callback' => 'local_relationship_observer:cohort_removed',
     ),
+    array(
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => 'local_relationship_observer::user_loggedin',
+    ),
 );

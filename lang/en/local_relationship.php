@@ -69,7 +69,8 @@ $string['searchrelationship'] = 'Buscar relacionamentos: ';
 
 $string['uniformdistribute'] = 'Distribuição uniforme';
 $string['uniformdistribute_help'] = 'Quando habilitada, esta opção indica que membros de coorte habilitado devem ser
-    uniforme e automaticamente distribuídos entre os grupos deste relacionamento que igualmente tenham sido habilitados.';
+    uniforme e automaticamente distribuídos entre os grupos deste relacionamento que igualmente tenham sido habilitados. 
+    Com a distribuição uniforme habilitada não é possível utilizar a rotina de atribuição em massa no relacionamento.';
 
 $string['cantedit'] = 'Este relacionamento não pode ser manualmente alterado';
 
@@ -91,6 +92,7 @@ $string['editcohort'] = 'Editar papel/coorte: \'{$a}\'';
 $string['deletecohort'] = 'Remover papel/coorte: \'{$a}\'';
 
 $string['assign'] = 'Atribuir';
+$string['massassign'] = 'Atribuir em massa';
 $string['courses'] = 'Cursos';
 $string['coursesusing'] = 'Cursos que utilizam o relacionamento: \'{$a}\'';
 $string['assignto'] = 'Membros do grupo: \'{$a}\'';
@@ -153,3 +155,75 @@ $string['group_already_exists'] = 'Este grupo já existe. Entre com outro nome p
 $string['course_group_already_exists'] = 'já há grupo com mesmo nome no curso: \'{$a}\'. É necessário renomear ou remover esse grupo.';
 $string['relationship_already_exists'] = 'Já existe relacionamento com este nome neste contexto. Ofereça outro nome para o relacionamento.';
 $string['has_cohorts'] = 'O relacionamento não pode ser excluído pois há um ou mais coortes cadastrados';
+
+$string['massassignusers'] = 'Atribuição em massa';
+$string['pendingmassassign'] = 'Atribuições pendentes';
+$string['massassignusers_help'] = 'Atribui em massa em um grupo de um relacionamento pessoas que já estejam cadastradas no Moodle';
+$string['massassignuserssccp'] = 'Atribuição em massa';
+$string['massassignuserssccp_help'] = 'Atribui em massa em um grupo de um relacionamento pessoas que já estejam cadastradas no Moodle ou que estejam regularmente registrada no SCCP - Cadastro de Pessoas da UFSC.
+
+As atribuições de pessoas que não estejam regularmente cadastradas no SCCP podem opcionalmente serem registradas como pendentes. Neste caso, após a pessoa completar seu cadastro no SCCP ela estará apta a acessar o Moodle, sendo que a atribuição pendente no grupo do relacionamento será automaticamente confirmada quando de seu primeiro acesso.';
+
+$string['massassignto'] = 'Atribuição em massa em: \'{$a}\'';
+$string['titlependingassign'] = 'Atribuição pendente:';
+$string['group'] = 'Grupo: \'{$a}\'';
+$string['cohort'] = 'Coorte: \'{$a}\'';
+$string['searchfield'] = 'Tipo de identificador';
+$string['searchvalues'] = 'Identificadores';
+$string['searchvalues_help'] = 'Lista de identificadores de pessoas (cpf). Informar um ou mais identificadores por linha, separados por espaço em branco, vírgula ou ponto-e-vírgula.';
+$string['massassigncohortid'] = 'Coorte';
+$string['massassigncohortid_help'] = 'Os usuários serão atribuídos no coorte informado. A atribuição é somente para coorte com papel de "estudante".';
+$string['allowallusers'] = 'Exceder o limite por papel';
+$string['allowallusers_help'] = 'Habilitando este recurso o número de usuários por papel poderá exceder o limite estabelecido.';
+$string['registerpendencies'] = 'Registrar pendências?';
+$string['registerpendencies_help'] = 'Registrar como pendente as atribuições que não puderem ser efetivadas
+    em função da pessoa não estar registrada no Cadastro de Pessoas da UFSC (SCCP) ou de haver alguma inconsistência nesse cadastro.
+    Após a pessoa completar seu registro no SCCP ela estará apta a acessar o Moodle sendo que a atribuição pendente
+    será automaticamente confirmada quando de seu primeiro acesso.';
+$string['massassignusers'] = 'Atribuição em massa';
+$string['cantmassassign'] = 'Não é possível atribuir em massa neste relacionamento. Verifique se existe coorte com papel de estudante neste relacionamento e, caso exista, verifique se este coorte não pertence a nenhum componente e que a distribuição uniforme está desabilitada no coorte e no grupo.';
+$string['invalidsearchvalues'] = 'Não foi informado nenhum identificador de usuário válido.';
+$string['backtogroups'] = 'Voltar para os grupos';
+$string['localufscnotinstalled'] = 'Módulo local/ufsc não está instalado. Por favor contate o administrador.';
+$string['authnotenabled'] = 'A autenticação do tipo \'{$a}\' não está habilitada neste ambiente';
+
+$string['massassignusers_desc'] = 'Atribui em massa uma lista de pessoas que estejam registradas no Moodle ou no SCCP em um determinado grupo de um relacionamento.';
+$string['authtype'] = 'Tipo de autenticação';
+$string['authtype_desc'] = 'Tipo de autenticação a ser utilizada quando cadastrar novas pessoas no Moodle a partir dos dados do SCCP.';
+$string['searchsccp'] = 'Buscar no SCCP';
+$string['searchsccp_desc'] = 'Ao atribuir usuário num grupo do relacionamento, buscar o usuário também no SCCP e cadastrá-lo no Moodle, caso ele ainda não esteja.<BR>
+    <STRONG>Esta opção demanda a instalação do plugin local/ufsc</STRONG>.';
+
+$string['invalidcpf'] = 'CPF inválido';
+$string['morethanoneusermoodle'] = 'Mais de uma pessoa com esse identificador no Moodle';
+$string['notuserinmoodle'] = 'Nenhuma pessoa com esse identificador no Moodle';
+$string['addcohortmember'] = 'Adicionado usuário no coorte';
+$string['alreadycohortmember'] = 'Usuário já atribuído no coorte';
+$string['alreadyrelationshipmemberdetail'] = 'Já atribuído em outro grupo do relacionamento: \'{$a}\'';
+$string['alreadyingroup'] = 'Usuário já está no grupo';
+$string['assigneduser'] = 'Usuário atribuído no relacionamento selecionado';
+$string['titleline'] = 'Linha';
+$string['titlecpf'] = 'CPF';
+$string['titleusername'] = 'Id. Usuário';
+$string['titlename'] = 'Nome';
+$string['titlestatus'] = 'Status';
+$string['summary'] = 'Sumário';
+$string['total'] = 'Total';
+$string['invalid'] = 'Problema com o identificador';
+$string['assigneduser'] = 'Atribuído com sucesso';
+$string['alreadyingroup'] = 'Já inscrito no grupo';
+$string['alreadyrelationshipmember'] = 'Já inscrito em outro grupo do relacionamento';
+$string['erroraddrelationshipmember'] = 'Erro ao adicionar no relacionamento';
+$string['exceedslimit'] = 'Alcançado o limite de usuários por papel no grupo';
+$string['emptyemailsccp'] = 'Email não registrado no Cadastro de Pessoas da UFSC (SCCP)';
+$string['errorcreatinguser'] = 'Houve erro ao criar novo usuário: \'{$a}\'';
+$string['addeduser'] = 'Cadastrado no Moodle';
+$string['morethanoneusersccp'] = 'Mais de uma pessoa no SCCP';
+$string['notinsccp'] = 'Não localizado no SCCP';
+$string['registeredaspending'] = 'Registrado como pendência';
+$string['alreadyregisteredaspending'] = 'Já estava registrado como pendência';
+$string['alreadyregisteredaspendingdetail'] = 'Já atribuído como pendente em outro grupo do relacionamento: \'{$a}\'';
+
+$string['timecreated'] = 'Data de registro';
+$string['delete'] = 'Remover atribuição pendente';
+$string['confirmdeletependency'] = 'Você realmente deseja remover a atribuição pendente: \'{$a}\'?';

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/relationship/db" VERSION="2015020101" COMMENT="XMLDB file for Moodle local/relationship"
+<XMLDB PATH="local/relationship/db" VERSION="20230330" COMMENT="XMLDB file for Moodle local/relationship"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -74,6 +74,23 @@
         <INDEX NAME="relmemb_reluse_uix" UNIQUE="true" FIELDS="relationshipgroupid, relationshipcohortid, userid"/>
         <INDEX NAME="relmemb_coh_ix" UNIQUE="false" FIELDS="relationshipcohortid"/>
         <INDEX NAME="relmemb_use_ix" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="relationship_pendencies" COMMENT="each record represents a pending relationship member assignment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="relationshipcohortid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="relationshipgroupid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="cpf" TYPE="char" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="allowallusers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="relpend_relcpf_uix" UNIQUE="true" FIELDS="relationshipgroupid, relationshipcohortid, cpf"/>
+        <INDEX NAME="relpend_cpf_ix" UNIQUE="false" FIELDS="cpf"/>
       </INDEXES>
     </TABLE>
   </TABLES>

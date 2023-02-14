@@ -230,6 +230,60 @@ function relationship_search_relationships($contextid, $page = 0, $perpage = 25,
     return array('totalrelationships' => $totalrelationships, 'relationships' => $relationships, 'allrelationships'=>$allrelationships);
 }
 
+/**
+ * Get a single relationshipcohort by shortname role
+ *
+ * @param $relationshipid
+ * @param $roleshortname
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
+ *                        MUST_EXIST means throw exception if no record or multiple records found
+ * @return mixed
+ * @throws coding_exception
+ */
+function relationship_get_cohort_by_roleshortname($relationshipid, $roleshortname, $strictness=IGNORE_MISSING) {
+    global $DB;
+
+    $sql = "SELECT rc.*, ch.name, ch.component, r.name rolename
+              FROM {relationship_cohorts} rc
+              JOIN {cohort} ch ON (ch.id = rc.cohortid)
+              JOIN {role} r ON (r.id = rc.roleid)
+             WHERE rc.relationshipid = :relationshipid
+                   AND r.shortname = :roleshortname";
+    $rc = $DB->get_record_sql($sql, array('relationshipid' => $relationshipid, 'roleshortname' => $roleshortname), $strictness);
+
+    return $rc;
+}
+
+function relationship_render_buttons($buttons) {
+    global $OUTPUT;
+
+    $text = '';
+    foreach ($buttons AS $btn) {
+        $text .= $OUTPUT->render($btn);
+    }
+    $text = html_writer::tag('div', $text, array('class' => 'buttons'));
+    return $OUTPUT->box($text, 'generalbox', 'notice');
+}
+
+function relationship_print_tabs($url, $tabs, $action='') {
+    global $OUTPUT;
+
+    if (is_array($tabs) && count($tabs) > 1) {
+        $tabsobject = array();
+
+        foreach ($tabs as $tab) {
+            $urltab = clone($url);
+            $urltab->param('action', $tab);
+            $tabsobject[$tab] = new tabobject($tab, $urltab, get_string($tab, 'local_relationship'));
+        }
+
+        $action = isset($tabsobject[$action]) ? $action : reset($tabs);
+        if (count($tabsobject) > 1) {
+            echo $OUTPUT->tabtree($tabsobject, $action);
+        }
+    }
+}
 
 
 
