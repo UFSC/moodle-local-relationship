@@ -97,4 +97,49 @@ class local_relationship_observer
 
         return true;
     }
+
+    /**
+     * Event processor - check relationship pendencies when user_loggedin event occurs.
+     * @param \core\event\user_loggedin $event
+     * @return bool
+     */
+    public static function user_loggedin(\core\event\user_loggedin $event) {
+        global $DB;
+
+        if (is_siteadmin($event->userid) || isguestuser($event->userid)) {
+            return true;
+        }
+
+        if (\local_relationship\mass_assign_processor::search_sccp()) {
+            $idnumber = $DB->get_field('user', 'idnumber', array('id'=>$event->userid));
+            if (!empty($idnumber)) {
+                $pessoas = \local_ufsc\pessoa::by_key('idpessoa', $idnumber);
+                if(!empty($pessoas)) {
+                    $pessoa = reset($pessoas);
+                    if (!empty($pessoa->cpf)) {
+                        $where = 'rp.cpf = :cpf';
+                        $params['cpf'] = $pessoa->cpf;
+
+                        $sql = "SELECT DISTINCT rp.id, rc.id AS relationshipcohortid, rg.id AS relationshipgroupid, rp.allowallusers
+                                  FROM {relationship_pendencies} rp
+                             LEFT JOIN {relationship_cohorts} rc ON (rc.id = rp.relationshipcohortid)
+                             LEFT JOIN {relationship_groups} rg ON (rg.id = rp.relationshipgroupid)
+                                 WHERE {$where}";
+                        $recs = $DB->get_records_sql($sql, $params);
+                        foreach ($recs AS $rec) {
+                            if (!empty($rec->relationshipcohortid) && !empty($rec->relationshipgroupid)) {
+                                $massassign = new \local_relationship\mass_assign_processor($rec->relationshipcohortid, $rec->relationshipgroupid, false, $rec->allowallusers);
+                                $result = $massassign->process_relationship($event->userid);
+                                if (in_array($result->summary,['assigneduser', 'alreadyingroup'])) {
+                                    $DB->delete_records('relationship_pendencies', array('id' => $rec->id));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 }
