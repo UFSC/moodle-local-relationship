@@ -69,7 +69,8 @@ $string['searchrelationship'] = 'Search relationships: ';
 
 $string['uniformdistribute'] = 'Uniform distribution';
 $string['uniformdistribute_help'] = 'When enabled, this option indicates that members of an enabled cohort should be
-    uniformly and automatically distributed among the relationship groups that have also been enabled.';
+    uniformly and automatically distributed among the relationship groups that have also been enabled.
+    When uniform distribution is enabled, the mass-assignment routine cannot be used on the relationship.';
 
 $string['cantedit'] = 'This relationship cannot be manually modified';
 
@@ -91,6 +92,7 @@ $string['editcohort'] = 'Edit role/cohort: \'{$a}\'';
 $string['deletecohort'] = 'Delete role/cohort: \'{$a}\'';
 
 $string['assign'] = 'Assign';
+$string['massassign'] = 'Mass assign';
 $string['courses'] = 'Courses';
 $string['coursesusing'] = 'Courses using the relationship: \'{$a}\'';
 $string['assignto'] = 'Group members: \'{$a}\'';
@@ -153,3 +155,70 @@ $string['group_already_exists'] = 'This group already exists. Enter another name
 $string['course_group_already_exists'] = 'There is already a group with the same name in course: \'{$a}\'. Rename or remove that group.';
 $string['relationship_already_exists'] = 'A relationship with this name already exists in this context. Provide another name for the relationship.';
 $string['has_cohorts'] = 'The relationship cannot be deleted because there are one or more cohorts registered';
+
+$string['massassignusers'] = 'Mass assignment';
+$string['pendingmassassign'] = 'Pending assignments';
+$string['massassignusers_help'] = 'Mass-assigns users already registered in Moodle into a relationship group.';
+$string['massassignuserssccp'] = 'Mass assignment';
+$string['massassignuserssccp_help'] = 'Mass-assigns into a relationship group users that are already registered in Moodle or properly registered in SCCP — UFSC People Registry.
+
+Assignments of people not properly registered in SCCP can optionally be recorded as pending. In that case, after the person completes their SCCP registration they will be able to access Moodle, and the pending assignment in the relationship group will be automatically confirmed on first login.';
+
+$string['massassignto'] = 'Mass assignment to: \'{$a}\'';
+$string['titlependingassign'] = 'Pending assignment:';
+$string['group'] = 'Group: \'{$a}\'';
+$string['cohort'] = 'Cohort: \'{$a}\'';
+$string['searchfield'] = 'Identifier type';
+$string['searchvalues'] = 'Identifiers';
+$string['searchvalues_help'] = 'List of personal identifiers (CPF). Provide one or more identifiers per line, separated by whitespace, comma or semicolon.';
+$string['massassigncohortid'] = 'Cohort';
+$string['massassigncohortid_help'] = 'Users will be assigned to the chosen cohort. Assignment is only available for cohorts bound to the "student" role.';
+$string['allowallusers'] = 'Exceed the limit per role';
+$string['allowallusers_help'] = 'When enabled, the number of users per role may exceed the configured limit.';
+$string['registerpendencies'] = 'Register pending assignments?';
+$string['registerpendencies_help'] = 'Record as pending the assignments that cannot be applied because the person is not registered in UFSC People Registry (SCCP) or because the registry has some inconsistency.
+    After the person completes their SCCP registration they will be able to access Moodle and the pending assignment will be automatically confirmed on first login.';
+$string['cantmassassign'] = 'Mass assignment is not available on this relationship. Check that a cohort with the student role exists in this relationship and, if so, that it does not belong to any component and that uniform distribution is disabled on both the cohort and the group.';
+$string['invalidsearchvalues'] = 'No valid user identifier was provided.';
+$string['backtogroups'] = 'Back to groups';
+$string['localufscnotinstalled'] = 'The local/ufsc module is not installed. Please contact your administrator.';
+$string['authnotenabled'] = 'Authentication of type \'{$a}\' is not enabled in this environment';
+
+$string['massassignusers_desc'] = 'Mass-assigns a list of people that are registered in Moodle or in SCCP to a given relationship group.';
+$string['authtype'] = 'Authentication type';
+$string['authtype_desc'] = 'Authentication type to use when registering new people in Moodle from SCCP data.';
+$string['searchsccp'] = 'Search in SCCP';
+$string['searchsccp_desc'] = 'When assigning a user to a relationship group, also search SCCP and create the user in Moodle if they are not present yet.<BR>
+    <STRONG>This option requires the local/ufsc plugin to be installed</STRONG>.';
+
+$string['invalidcpf'] = 'Invalid CPF';
+$string['morethanoneusermoodle'] = 'More than one person matching this identifier in Moodle';
+$string['notuserinmoodle'] = 'No person matching this identifier in Moodle';
+$string['addcohortmember'] = 'User added to the cohort';
+$string['alreadycohortmember'] = 'User already assigned to the cohort';
+$string['alreadyrelationshipmemberdetail'] = 'Already assigned to another relationship group: \'{$a}\'';
+$string['alreadyingroup'] = 'User is already enrolled in the group';
+$string['titleline'] = 'Line';
+$string['titlecpf'] = 'CPF';
+$string['titleusername'] = 'User ID';
+$string['titlename'] = 'Name';
+$string['titlestatus'] = 'Status';
+$string['summary'] = 'Summary';
+$string['total'] = 'Total';
+$string['invalid'] = 'Problem with the identifier';
+$string['assigneduser'] = 'Assigned successfully';
+$string['alreadyrelationshipmember'] = 'Already enrolled in another relationship group';
+$string['erroraddrelationshipmember'] = 'Error while adding to the relationship';
+$string['exceedslimit'] = 'User-per-role limit reached for the group';
+$string['emptyemailsccp'] = 'Email is not registered in UFSC People Registry (SCCP)';
+$string['errorcreatinguser'] = 'Error while creating new user: \'{$a}\'';
+$string['addeduser'] = 'Registered in Moodle';
+$string['morethanoneusersccp'] = 'More than one person in SCCP';
+$string['notinsccp'] = 'Not found in SCCP';
+$string['registeredaspending'] = 'Registered as pending';
+$string['alreadyregisteredaspending'] = 'Was already registered as pending';
+$string['alreadyregisteredaspendingdetail'] = 'Already pending in another relationship group: \'{$a}\'';
+
+$string['timecreated'] = 'Creation date';
+$string['delete'] = 'Delete pending assignment';
+$string['confirmdeletependency'] = 'Are you sure you want to delete the pending assignment: \'{$a}\'?';

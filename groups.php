@@ -44,6 +44,7 @@ relationship_set_header($context, $baseurl, $relationship, 'groups');
 relationship_set_title($relationship, 'groups');
 
 $relationshipgroups = relationship_get_groups($relationshipid);
+$relationshipcohort = relationship_get_cohort_by_roleshortname($relationshipid, 'student');
 
 $data = array();
 foreach ($relationshipgroups as $relationshipgroup) {
@@ -72,13 +73,17 @@ foreach ($relationshipgroups as $relationshipgroup) {
     $buttons = array();
     if ($editable) {
         $buttons[] = html_writer::link(new moodle_url('/local/relationship/edit_group.php', array('relationshipgroupid' => $relationshipgroup->id, 'delete' => 1)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete'), 'title' => get_string('delete'), 'class' => 'iconsmall')));
+                html_writer::span($OUTPUT->pix_icon('t/delete', get_string('delete'), 'moodle', ['class' => 'iconsmall'])));
         $buttons[] = html_writer::link(new moodle_url('/local/relationship/edit_group.php', array('relationshipgroupid' => $relationshipgroup->id)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' => get_string('edit'), 'title' => get_string('edit'), 'class' => 'iconsmall')));
+                html_writer::span($OUTPUT->pix_icon('t/edit', get_string('edit'), 'moodle', ['class' => 'iconsmall'])));
     }
     if ($manager || $canassign) {
         $buttons[] = html_writer::link(new moodle_url('/local/relationship/assign.php', array('relationshipgroupid' => $relationshipgroup->id)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/assignroles'), 'alt' => get_string('assign', 'local_relationship'), 'title' => get_string('assign', 'local_relationship'), 'class' => 'iconsmall')));
+                html_writer::span($OUTPUT->pix_icon('t/assignroles', get_string('assign', 'local_relationship'), 'moodle', ['class' => 'iconsmall'])));
+        if($relationshipcohort && empty($relationshipcohort->component) && !$relationshipcohort->uniformdistribution && !$relationshipgroup->uniformdistribution) {
+            $buttons[] = html_writer::link(new moodle_url('/local/relationship/mass_assign.php', array('relationshipgroupid' => $relationshipgroup->id)),
+                    html_writer::span($OUTPUT->pix_icon('t/add', get_string('massassign', 'local_relationship'), 'moodle', ['class' => 'iconsmall'])));
+        }
     }
     $line[] = implode(' ', $buttons);
 
