@@ -313,7 +313,7 @@ class mass_assign_processor {
     private function find_users($searchfield, $searchvalue) {
         global $DB;
 
-        $moodlefields = 'id, username, email, ' . implode(',', get_all_user_name_fields());
+        $moodlefields = 'id, username, email, ' . implode(',', \core_user\fields::get_name_fields());
 
         switch ($searchfield) {
             case 'cpf':
@@ -340,7 +340,7 @@ class mass_assign_processor {
     public function create_user($pessoa, $authtype) {
         global $CFG, $DB;
         $user = new \stdClass();
-        foreach (get_all_user_name_fields() AS $name) {
+        foreach (\core_user\fields::get_name_fields() AS $name) {
             $user->$name = '';
         }
         $user->username  = isset($pessoa->cpf) && !empty($pessoa->cpf) ? $pessoa->cpf : core_text::strtolower($pessoa->idpessoa);
@@ -443,10 +443,10 @@ class mass_assign_processor {
         } else {
             for ($t = 9; $t < 11; $t++) {
                 for ($d = 0, $c = 0; $c < $t; $c++) {
-                    $d += $cpf{$c} * (($t + 1) - $c);
+                    $d += $cpf[$c] * (($t + 1) - $c);
                 }
                 $d = ((10 * $d) % 11) % 10;
-                if ($cpf{$c} != $d) {
+                if ($cpf[$c] != $d) {
                     return false;
                 }
             }
