@@ -261,6 +261,10 @@ function relationship_add_relationship($relationship) {
         $relationship->timemodified = $relationship->timecreated;
     }
 
+    if (!isset($relationship->tags)) {
+        $relationship->tags = array();
+    }
+
     $result = $DB->insert_record('relationship', $relationship);
 
     if ($result) {
