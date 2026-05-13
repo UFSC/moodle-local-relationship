@@ -462,9 +462,37 @@ function relationship_update_cohort($relationshipcohort) {
  */
 function relationship_delete_cohort($relationshipcohort) {
     global $DB;
+
+    $candidates = $DB->get_records('relationship_cohorts',
+            array('relationshipid' => $relationshipcohort->relationshipid,
+                  'roleid' => $relationshipcohort->roleid),
+            'id ASC');
+    unset($candidates[$relationshipcohort->id]);
+
     $members = $DB->get_records('relationship_members', array('relationshipcohortid' => $relationshipcohort->id));
     foreach ($members as $m) {
-        relationship_remove_member($m->relationshipgroupid, $m->relationshipcohortid, $m->userid);
+        $transferred = false;
+        foreach ($candidates as $candidate) {
+            if (!$DB->record_exists('cohort_members',
+                    array('cohortid' => $candidate->cohortid, 'userid' => $m->userid))) {
+                continue;
+            }
+            $exists = $DB->record_exists('relationship_members', array(
+                    'relationshipgroupid' => $m->relationshipgroupid,
+                    'relationshipcohortid' => $candidate->id,
+                    'userid' => $m->userid));
+            if ($exists) {
+                $DB->delete_records('relationship_members', array('id' => $m->id));
+            } else {
+                $DB->set_field('relationship_members', 'relationshipcohortid', $candidate->id,
+                        array('id' => $m->id));
+            }
+            $transferred = true;
+            break;
+        }
+        if (!$transferred) {
+            relationship_remove_member($m->relationshipgroupid, $m->relationshipcohortid, $m->userid);
+        }
     }
 
     return $DB->delete_records('relationship_cohorts', array('id' => $relationshipcohort->id));
