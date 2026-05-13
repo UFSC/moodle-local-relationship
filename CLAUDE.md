@@ -70,6 +70,58 @@ The settings-navigation hook in `lib.php` only shows the menu entry if `:manage`
 
 `version.php` declares `requires = 2013111803` (Moodle 2.6+) and is on `MATURITY_BETA`. Bump `$plugin->version` (YYYYMMDDXX) for any schema or install/upgrade-affecting change.
 
+## Branch hierarchy and cross-version cascade
+
+The plugin is maintained against several Moodle versions in parallel. The release branches form a strictly linear, ordered chain (oldest → newest):
+
+```
+MOODLE_30_STABLE → MOODLE_31_STABLE → MOODLE_38_STABLE → MOODLE_401_STABLE
+```
+
+`master` is independent of this chain. `MOODLE_35_STABLE` exists on some remotes but is considered legacy — **not part of the cascade**.
+
+### Remotes (two mirrors)
+
+The repo is mirrored on two upstream hosts. Every push must reach **both**:
+
+- `origin_ufsc` → `git@gitlab.setic.ufsc.br:moodle-ufsc/moodle_local-relationship.git` (GitLab UFSC)
+- `stream` → `git@github.com:UFSC/moodle-local-relationship.git` (GitHub UFSC)
+
+A third remote, `origin`, points to the same GitHub repo as `stream` over HTTPS — ignore it for pushes; pushing to `stream` already updates GitHub.
+
+### Cascade rule
+
+When a change lands on any branch in the chain, every branch *downstream* (to the right of it) must be rebased onto its immediately preceding chain neighbour, in order, and force-pushed **to both mirrors** before moving on to the next branch.
+
+Example — a fix committed on `MOODLE_31_STABLE`:
+
+```bash
+# 1. Land the change on the branch you're editing, push to both mirrors.
+git checkout MOODLE_31_STABLE
+# ... edit, git add, git commit ...
+git push --force-with-lease origin_ufsc MOODLE_31_STABLE
+git push --force-with-lease stream      MOODLE_31_STABLE
+
+# 2. Rebase each downstream branch onto its predecessor, in order, pushing to both mirrors at each step.
+git checkout MOODLE_38_STABLE
+git rebase MOODLE_31_STABLE
+git push --force-with-lease origin_ufsc MOODLE_38_STABLE
+git push --force-with-lease stream      MOODLE_38_STABLE
+
+git checkout MOODLE_401_STABLE
+git rebase MOODLE_38_STABLE
+git push --force-with-lease origin_ufsc MOODLE_401_STABLE
+git push --force-with-lease stream      MOODLE_401_STABLE
+```
+
+### Notes
+
+- Always cascade in order (`31 → 38 → 401`, never skip a hop). Each branch rebases onto the **previous chain branch as just updated**, not onto the branch where the original change was made.
+- Each branch must be pushed to **both** `origin_ufsc` and `stream` before moving on; never let one mirror lag behind the other across a cascade step.
+- Upstream branches (to the left of where you committed) are **not** updated automatically — backporting to older versions is a separate, explicit decision.
+- Prefer `git push --force-with-lease` over `git push --force` (or `-f`). It refuses to overwrite remote work that appeared since your last fetch, which is the usual collaboration hazard with force-pushes. Use the unsafer `--force` only when you have a specific reason and have confirmed no one else is working on the branch.
+- Resolve any conflicts during rebase the normal way (`git add` + `git rebase --continue`); do not abandon the cascade halfway — leaving downstream branches out of sync is the failure mode this rule exists to prevent.
+
 ## Conventions to follow
 
 - The `relationship` tag is registered via `tag_set('relationship', ...)`. Keep tag handling routed through that itemtype.
