@@ -78,7 +78,11 @@ The plugin is maintained against several Moodle versions in parallel. The releas
 MOODLE_30_STABLE → MOODLE_31_STABLE → MOODLE_38_STABLE → MOODLE_401_STABLE
 ```
 
-`master` is independent of this chain. `MOODLE_35_STABLE` exists on some remotes but is considered legacy — **not part of the cascade**.
+`MOODLE_35_STABLE` exists on some remotes but is considered legacy — **not part of the cascade**.
+
+### `master` and `main`: aliases for `MOODLE_30_STABLE`
+
+`master` and `main` are kept strictly aligned with `MOODLE_30_STABLE` — they always point at the exact same commit. They do **not** receive commits directly and are **not** part of the cascade chain. Whenever `MOODLE_30_STABLE` moves, both `master` and `main` must be fast-forwarded to it and pushed to both mirrors (see the cascade workflow below).
 
 ### Remotes (two mirrors)
 
@@ -91,33 +95,60 @@ A third remote, `origin`, points to the same GitHub repo as `stream` over HTTPS 
 
 ### Cascade rule
 
-When a change lands on any branch in the chain, every branch *downstream* (to the right of it) must be rebased onto its immediately preceding chain neighbour, in order, and force-pushed **to both mirrors** before moving on to the next branch.
+When a change lands on any branch in the chain:
 
-Example — a fix committed on `MOODLE_31_STABLE`:
+1. Remember the originally-active branch so you can return to it at the end.
+2. Push the branch where the commit landed to both mirrors.
+3. **If** the commit landed on `MOODLE_30_STABLE`: fast-forward `master` and `main` to it and push both to both mirrors. (If the commit landed elsewhere, skip this step — `MOODLE_30_STABLE` did not move.)
+4. For every branch *downstream* of where the commit landed (to the right of it in the chain), rebase it onto its immediately preceding chain neighbour, in order, and force-push to both mirrors.
+5. Return to the branch you remembered in step 1.
+
+Example — a fix committed on `MOODLE_30_STABLE` (the base of the chain, so the full workflow runs):
 
 ```bash
-# 1. Land the change on the branch you're editing, push to both mirrors.
-git checkout MOODLE_31_STABLE
+# 0. Remember where we started.
+ORIGINAL_BRANCH=$(git branch --show-current)
+
+# 1. Land the change on MOODLE_30_STABLE, push to both mirrors.
+git checkout MOODLE_30_STABLE
 # ... edit, git add, git commit ...
+git push origin_ufsc MOODLE_30_STABLE
+git push stream      MOODLE_30_STABLE
+
+# 2. master and main follow MOODLE_30_STABLE (fast-forward).
+git checkout master && git merge --ff-only MOODLE_30_STABLE
+git push origin_ufsc master
+git push stream      master
+
+git checkout main && git merge --ff-only MOODLE_30_STABLE
+git push origin_ufsc main
+git push stream      main
+
+# 3. Cascade downstream — each branch rebases onto the previous one as just updated.
+git checkout MOODLE_31_STABLE && git rebase MOODLE_30_STABLE
 git push --force-with-lease origin_ufsc MOODLE_31_STABLE
 git push --force-with-lease stream      MOODLE_31_STABLE
 
-# 2. Rebase each downstream branch onto its predecessor, in order, pushing to both mirrors at each step.
-git checkout MOODLE_38_STABLE
-git rebase MOODLE_31_STABLE
+git checkout MOODLE_38_STABLE && git rebase MOODLE_31_STABLE
 git push --force-with-lease origin_ufsc MOODLE_38_STABLE
 git push --force-with-lease stream      MOODLE_38_STABLE
 
-git checkout MOODLE_401_STABLE
-git rebase MOODLE_38_STABLE
+git checkout MOODLE_401_STABLE && git rebase MOODLE_38_STABLE
 git push --force-with-lease origin_ufsc MOODLE_401_STABLE
 git push --force-with-lease stream      MOODLE_401_STABLE
+
+# 4. Return to the original branch.
+git checkout "$ORIGINAL_BRANCH"
 ```
+
+If the change lands on a non-base branch (e.g., `MOODLE_31_STABLE`), skip step 2 — `MOODLE_30_STABLE` was not touched, so `master` and `main` are already in sync. Push only the branch where the commit landed, then cascade downstream from there, then return.
 
 ### Notes
 
 - Always cascade in order (`31 → 38 → 401`, never skip a hop). Each branch rebases onto the **previous chain branch as just updated**, not onto the branch where the original change was made.
 - Each branch must be pushed to **both** `origin_ufsc` and `stream` before moving on; never let one mirror lag behind the other across a cascade step.
+- `master` and `main` track `MOODLE_30_STABLE` by fast-forward (`git merge --ff-only MOODLE_30_STABLE` + plain `git push`) in the normal case. If `MOODLE_30_STABLE` was rewritten (e.g., amend or rebase of an existing commit), the alias branches need `git reset --hard MOODLE_30_STABLE` + `git push --force-with-lease` instead.
+- Always return to the branch you started on at the end of the cascade (step 5). Skipping this leaves you parked on `MOODLE_401_STABLE` (or whichever was last) and a follow-up session may accidentally continue work on the wrong branch.
 - Upstream branches (to the left of where you committed) are **not** updated automatically — backporting to older versions is a separate, explicit decision.
 - Prefer `git push --force-with-lease` over `git push --force` (or `-f`). It refuses to overwrite remote work that appeared since your last fetch, which is the usual collaboration hazard with force-pushes. Use the unsafer `--force` only when you have a specific reason and have confirmed no one else is working on the branch.
 - Resolve any conflicts during rebase the normal way (`git add` + `git rebase --continue`); do not abandon the cascade halfway — leaving downstream branches out of sync is the failure mode this rule exists to prevent.
