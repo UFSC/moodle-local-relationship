@@ -620,21 +620,16 @@ class local_relationship_crud_testcase extends advanced_testcase {
         )));
     }
 
-    public function test_remove_member_returns_true_even_when_record_absent() {
-        // Gotcha: $DB->delete_records() devolve true mesmo quando 0 linhas são afetadas.
-        // relationship_remove_member não distingue "removeu" de "tentou remover sem match" —
-        // logo o retorno é true em ambos casos. Quem precisar saber se algo foi removido tem
-        // que checar antes via record_exists.
+    public function test_remove_member_returns_false_when_record_absent() {
         $rid = $this->make_relationship();
         $rc = $this->make_cohort_link($rid);
         $gid = $this->make_group($rid);
         $user = $this->getDataGenerator()->create_user();
 
-        $this->assertTrue(relationship_remove_member($gid, $rc, $user->id));
+        $this->assertFalse(relationship_remove_member($gid, $rc, $user->id));
     }
 
-    public function test_remove_member_triggers_event_even_when_nothing_was_deleted() {
-        // Consequência do gotcha acima: o evento dispara mesmo sem deleção real.
+    public function test_remove_member_does_not_trigger_event_when_nothing_was_deleted() {
         $rid = $this->make_relationship();
         $rc = $this->make_cohort_link($rid);
         $gid = $this->make_group($rid);
@@ -645,13 +640,8 @@ class local_relationship_crud_testcase extends advanced_testcase {
 
         $events = $sink->get_events();
         $sink->close();
-        $found = false;
         foreach ($events as $e) {
-            if ($e instanceof \local_relationship\event\relationshipgroup_member_removed) {
-                $found = true;
-                break;
-            }
+            $this->assertNotInstanceOf('\\local_relationship\\event\\relationshipgroup_member_removed', $e);
         }
-        $this->assertTrue($found);
     }
 }

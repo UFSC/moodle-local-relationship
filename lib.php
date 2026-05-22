@@ -186,27 +186,31 @@ function relationship_remove_member($relationshipgroupid, $relationshipcohortid,
     global $DB;
 
     $params = array('relationshipgroupid' => $relationshipgroupid, 'userid' => $userid, 'relationshipcohortid' => $relationshipcohortid);
-    $result = $DB->delete_records('relationship_members', $params);
 
-    if ($result) {
-        $relationshipgroup = $DB->get_record('relationship_groups', array('id' => $relationshipgroupid), '*', MUST_EXIST);
-        $relationshipcohort = $DB->get_record('relationship_cohorts', array('id' => $relationshipcohortid), '*', MUST_EXIST);
-        $relationship = $DB->get_record('relationship', array('id' => $relationshipgroup->relationshipid), '*', MUST_EXIST);
-
-        $event = \local_relationship\event\relationshipgroup_member_removed::create(array(
-                'context' => context::instance_by_id($relationship->contextid),
-                'objectid' => $relationshipgroupid,
-                'relateduserid' => $userid,
-                'other' => $relationshipcohort->roleid,
-        ));
-        $event->add_record_snapshot('relationship_groups', $relationshipgroup);
-        $event->add_record_snapshot('relationship', $relationship);
-        $event->trigger();
-
-        return true;
+    // $DB->delete_records() returns true even for 0 affected rows, so without this guard
+    // the member_removed event would fire for non-existent tuples and the return value
+    // would falsely advertise a deletion.
+    if (!$DB->record_exists('relationship_members', $params)) {
+        return false;
     }
 
-    return false;
+    $DB->delete_records('relationship_members', $params);
+
+    $relationshipgroup = $DB->get_record('relationship_groups', array('id' => $relationshipgroupid), '*', MUST_EXIST);
+    $relationshipcohort = $DB->get_record('relationship_cohorts', array('id' => $relationshipcohortid), '*', MUST_EXIST);
+    $relationship = $DB->get_record('relationship', array('id' => $relationshipgroup->relationshipid), '*', MUST_EXIST);
+
+    $event = \local_relationship\event\relationshipgroup_member_removed::create(array(
+            'context' => context::instance_by_id($relationship->contextid),
+            'objectid' => $relationshipgroupid,
+            'relateduserid' => $userid,
+            'other' => $relationshipcohort->roleid,
+    ));
+    $event->add_record_snapshot('relationship_groups', $relationshipgroup);
+    $event->add_record_snapshot('relationship', $relationship);
+    $event->trigger();
+
+    return true;
 }
 
 /**
