@@ -222,3 +222,10 @@ $string['alreadyregisteredaspendingdetail'] = 'Already pending in another relati
 $string['timecreated'] = 'Creation date';
 $string['delete'] = 'Delete pending assignment';
 $string['confirmdeletependency'] = 'Are you sure you want to delete the pending assignment: \'{$a}\'?';
+
+// Privacy provider metadata.
+$string['privacy:metadata:relationship_members'] = 'Information about a user belonging to a relationship group through a role/cohort mapping.';
+$string['privacy:metadata:relationship_members:relationshipgroupid'] = 'The relationship group the user is a member of.';
+$string['privacy:metadata:relationship_members:relationshipcohortid'] = 'The role/cohort link that placed the user in the relationship group.';
+$string['privacy:metadata:relationship_members:userid'] = 'The user that belongs to the relationship group.';
+$string['privacy:metadata:relationship_members:timeadded'] = 'When the user was added to the relationship group.';

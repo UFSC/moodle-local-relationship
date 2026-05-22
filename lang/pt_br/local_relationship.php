@@ -223,3 +223,10 @@ $string['alreadyregisteredaspendingdetail'] = 'Já atribuído como pendente em o
 $string['timecreated'] = 'Data de registro';
 $string['delete'] = 'Remover atribuição pendente';
 $string['confirmdeletependency'] = 'Você realmente deseja remover a atribuição pendente: \'{$a}\'?';
+
+// Metadados do privacy provider.
+$string['privacy:metadata:relationship_members'] = 'Informação sobre a participação de um usuário em um grupo de relacionamento, através de uma vinculação papel/coorte.';
+$string['privacy:metadata:relationship_members:relationshipgroupid'] = 'O grupo de relacionamento do qual o usuário é membro.';
+$string['privacy:metadata:relationship_members:relationshipcohortid'] = 'A vinculação papel/coorte que colocou o usuário no grupo de relacionamento.';
+$string['privacy:metadata:relationship_members:userid'] = 'O usuário que pertence ao grupo de relacionamento.';
+$string['privacy:metadata:relationship_members:timeadded'] = 'Quando o usuário foi adicionado ao grupo de relacionamento.';
