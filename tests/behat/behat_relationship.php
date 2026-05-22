@@ -19,13 +19,6 @@ class behat_relationship extends behat_base {
          }
      }
 
-     /**
-      *@AfterStep
-      */
-     public function after($event) {
-         $exception = $event->getException();
-     }
-
     /**
     * Click on the element with the provided xpath query
     *
