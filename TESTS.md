@@ -68,7 +68,7 @@ Step custom: `tests/behat/behat_relationship.php` (estende `behat_base`) — adi
 
 ## Testes PHPUnit (unitários)
 
-**Cobertura atual: 71 testes, 137 asserções, ~8s combinados.**
+**Cobertura atual: 73 testes, 142 asserções, ~8s combinados.**
 
 ### Arquivos
 
@@ -80,7 +80,7 @@ Step custom: `tests/behat/behat_relationship.php` (estende `behat_base`) — adi
   - `relationship_groups`: trim de nome, exceção em relationship inexistente, evento `relationshipgroup_created`/`updated`/`deleted`, get com `size` (contagem de membros), delete em cascata sobre members.
   - `relationship_members`: insert simples, **duplicata na tupla (group, cohort, user) retorna false sem erro**, FK inválida lança exceção, evento `relationshipgroup_member_added` com `relateduserid`/`objectid` corretos, gotcha documentado: `remove_member` retorna `true` e dispara evento **mesmo quando o registro não existia** (consequência do `$DB->delete_records` ser permissivo).
 - `tests/distribution_test.php` — 11 testes para `relationship_uniformly_distribute_users` (algoritmo greedy). Cobre: array vazio sem efeitos colaterais, sem grupos no pool, grupos sem flag `uniformdistribution` ignorados, grupo único ilimitado absorve todos, 2 grupos ilimitados dividem par, ímpar joga extra no primeiro (desempate por id), `userlimit` corta tamanho, excedente descartado quando todos cheios, `userlimit=0` significa ilimitado em meio a grupos limitados, contagem inicial não-zero (grupo pré-populado) ajusta distribuição, idempotência (rodar duas vezes com mesmos usuários não cria duplicatas).
-- `tests/observer_test.php` — 6 testes para `classes/observer.php` e `local_relationship_cron`. Dispara eventos core (`cohort_add_member`, `cohort_remove_member`) via API do Moodle e verifica os efeitos em `relationship_members`: distribuição uniforme quando cohort tem `uniformdistribution=1`, no-op quando flag desligada, no-op quando cohort não está ligado ao relationship, cascata de remoção quando user é removido do cohort, isolamento entre users, e smoke test do cron resgatando membros não distribuídos.
+- `tests/observer_test.php` — 8 testes para `classes/observer.php` e `local_relationship_cron`. Dispara eventos core (`cohort_add_member`, `cohort_remove_member`, `cohort_delete_cohort`) via API do Moodle e verifica os efeitos: distribuição uniforme quando cohort tem `uniformdistribution=1`, no-op quando flag desligada, no-op quando cohort não está ligado ao relationship, cascata de remoção quando user é removido do cohort, isolamento entre users, smoke test do cron resgatando membros não distribuídos, **handler de `cohort_deleted` derrubando os `relationship_cohorts` órfãos** (regressão do fix em `db/events.php`), e cascata quando o mesmo cohort está ligado a múltiplos relationships.
 
 ### Como executar
 

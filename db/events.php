@@ -34,7 +34,7 @@ $observers = array(
         'callback' => 'local_relationship_observer::member_removed',
     ),
     array(
-        'eventname' => ' \core\event\cohort_deleted',
-        'callback' => 'local_relationship_observer:cohort_removed',
+        'eventname' => '\core\event\cohort_deleted',
+        'callback' => 'local_relationship_observer::cohort_removed',
     ),
 );

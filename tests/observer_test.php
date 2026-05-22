@@ -177,6 +177,56 @@ class local_relationship_observer_testcase extends advanced_testcase {
     }
 
     // ---------------------------------------------------------------------
+    // cohort_removed handler — antes do fix em db/events.php (leading space
+    // no eventname e single colon no callback), este handler nunca disparava
+    // e os relationship_cohorts ligados ao cohort deletado ficavam órfãos.
+    // ---------------------------------------------------------------------
+
+    public function test_cohort_deleted_observer_removes_relationship_cohort_links() {
+        global $DB;
+
+        $rcid = $this->add_cohort_link();
+        $gid = $this->add_group();
+
+        $user = $this->getDataGenerator()->create_user();
+        cohort_add_member($this->cohort->id, $user->id);
+        relationship_add_member($gid, $rcid, $user->id);
+
+        $this->assertTrue($DB->record_exists('relationship_cohorts', array('id' => $rcid)));
+
+        cohort_delete_cohort($this->cohort);
+
+        // O observer chama relationship_delete_cohort para cada link, que limpa membros
+        // e remove a linha de relationship_cohorts.
+        $this->assertFalse($DB->record_exists('relationship_cohorts', array('id' => $rcid)));
+        $this->assertFalse($DB->record_exists('relationship_members', array('userid' => $user->id)));
+    }
+
+    public function test_cohort_deleted_observer_handles_multiple_relationship_links_to_the_same_cohort() {
+        global $DB;
+
+        // Mesmo cohort ligado a 2 relationships distintos.
+        $rcid1 = $this->add_cohort_link();
+        $other_rid = relationship_add_relationship((object) array(
+            'contextid' => $this->catcontext->id,
+            'name' => 'Outro',
+        ));
+        $rcid2 = relationship_add_cohort((object) array(
+            'relationshipid' => $other_rid,
+            'cohortid' => $this->cohort->id,
+            'roleid' => $this->roleid,
+            'allowdupsingroups' => 0,
+            'uniformdistribution' => 0,
+        ));
+
+        cohort_delete_cohort($this->cohort);
+
+        // Ambas as ligações são derrubadas.
+        $this->assertFalse($DB->record_exists('relationship_cohorts', array('id' => $rcid1)));
+        $this->assertFalse($DB->record_exists('relationship_cohorts', array('id' => $rcid2)));
+    }
+
+    // ---------------------------------------------------------------------
     // cron
     // ---------------------------------------------------------------------
 
