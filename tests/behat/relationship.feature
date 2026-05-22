@@ -100,3 +100,64 @@ Scenario: User with capability has access to the relationship edition features
   When I follow "Relacionamentos"
   When I follow "Groups"
   Then I should see "Grupos" in the "h4" "css_element"
+
+@javascript
+Scenario: Submitting a new relationship without a name keeps the user on the edit form
+  Given I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  When I set the field "Descrição" to "Sem nome"
+  And I press "Save changes"
+  Then I should see "Adicionar novo relacionamento"
+
+@javascript
+Scenario: Cancel on the relationship edit form returns to the listing without persisting
+  Given I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  And I set the field "Nome" to "Nao persistido"
+  When I press "Cancel"
+  Then I should not see "Nao persistido"
+
+@javascript
+Scenario: Search filters the relationships listing by name
+  Given I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  And I set the field "Nome" to "Alpha"
+  And I set the field "Descrição" to "A"
+  And I press "Save changes"
+  And I press "Add"
+  And I set the field "Nome" to "Beta"
+  And I set the field "Descrição" to "B"
+  And I press "Save changes"
+  When I set the field "relationship_search_q" to "Alpha"
+  And I press "Buscar"
+  Then I should see "Alpha"
+  And I should not see "Beta"
+
+@javascript
+Scenario: Relationships flagged with an external component hide the edit and delete icons
+  Given I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  And I set the field "Nome" to "Externo"
+  And I set the field "Descrição" to "Owned by another plugin"
+  And I press "Save changes"
+  And the relationship "Externo" has component "local_relationship"
+  When I follow "Relacionamentos"
+  Then I should see "Externo"
+  And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Edit']" "xpath_element" should not exist
+  And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Delete']" "xpath_element" should not exist

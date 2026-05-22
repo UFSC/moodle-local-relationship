@@ -44,5 +44,19 @@ class behat_relationship extends behat_base {
         // ok, let's click on it
         $element->click();
     }
+
+    /**
+     * Sets the component field of a relationship to mark it as externally
+     * managed, so the UI hides the edit/delete buttons in index.php and
+     * blocks edit_cohort/edit_group. Useful to test the "cantedit" branch
+     * without installing a plugin that owns the relationship.
+     *
+     * @Given /^the relationship "([^"]*)" has component "([^"]*)"$/
+     */
+    public function theRelationshipHasComponent($name, $component) {
+        global $DB;
+        $relationship = $DB->get_record('relationship', array('name' => $name), '*', MUST_EXIST);
+        $DB->set_field('relationship', 'component', $component, array('id' => $relationship->id));
+    }
 }
 

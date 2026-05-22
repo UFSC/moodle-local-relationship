@@ -195,6 +195,19 @@ Scenario: Toggling uniformdistribution on a cohort is persisted and shown on the
   Then I should see "Yes" in the "//table[@id='relationships']/tbody//tr[1]/td[5]" "xpath_element"
 
 @javascript
+Scenario: A "no cohorts available" message appears when every cohort is already linked
+  When I follow "Papeis e coortes"
+  And I press "Add"
+  And I press "Save changes"
+  Then I should see "Não há coortes disponíveis para adição neste relacionamento."
+
+@javascript
+Scenario: A fresh relationship lands on the groups page with the add buttons visible
+  When I follow "Groups"
+  Then "Adicionar novo grupo" "button" should exist
+  And "Adicionar vários grupos" "button" should exist
+
+@javascript
 Scenario: Pressing distribute-remaining moves cohort members into uniformdistribution groups
   When I follow "Papeis e coortes"
   And I follow "Edit"
