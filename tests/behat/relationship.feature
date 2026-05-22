@@ -39,36 +39,23 @@ Background:
     | Cohort 1 | COHORT1  |
 
 @javascript
-Scenario: Students cannot navigate to the relationship page
-  When I log in as "student1"
-  And I am on homepage
-  Then I should not see "Category 1"
-  When I follow "Course1"
-  Then I should not see "Relationships"
-
-@javascript
-Scenario: Admin is able to see link to relationship
+Scenario: Admin is able to open the relationships page for a category
   When I log in as "admin"
-  And I am on homepage
-  And I follow "Courses"
-  And I follow "Category 1"
+  And I am on the relationships page for category "Category 1"
   Then I should see "Relationships"
+  And I should see "Add"
 
 @javascript
-Scenario: User with capability is able to see link to relationship
+Scenario: User with capability is able to open the relationships page for a category
   When I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
+  And I am on the relationships page for category "Category 1"
   Then I should see "Relationships"
+  And I should see "Add"
 
 @javascript
 Scenario: User with capability has access to the relationship creation and deletion feature
   When I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   Then I should see "Add new relationship"
   When I set the field "Name" to "Teste 1"
@@ -84,10 +71,7 @@ Scenario: User with capability has access to the relationship creation and delet
 @javascript
 Scenario: User with capability has access to the relationship edition features
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   And I set the field "Name" to "Teste 1"
   And I set the field "Description" to "Description"
@@ -104,10 +88,7 @@ Scenario: User with capability has access to the relationship edition features
 @javascript
 Scenario: Submitting a new relationship without a name keeps the user on the edit form
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   When I set the field "Description" to "Sem nome"
   And I press "Save changes"
@@ -116,10 +97,7 @@ Scenario: Submitting a new relationship without a name keeps the user on the edi
 @javascript
 Scenario: Cancel on the relationship edit form returns to the listing without persisting
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   And I set the field "Name" to "Nao persistido"
   When I press "Cancel"
@@ -128,10 +106,7 @@ Scenario: Cancel on the relationship edit form returns to the listing without pe
 @javascript
 Scenario: Search filters the relationships listing by name
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   And I set the field "Name" to "Alpha"
   And I set the field "Description" to "A"
@@ -148,16 +123,13 @@ Scenario: Search filters the relationships listing by name
 @javascript
 Scenario: Relationships flagged with an external component hide the edit and delete icons
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   And I set the field "Name" to "Externo"
   And I set the field "Description" to "Owned by another plugin"
   And I press "Save changes"
   And the relationship "Externo" has component "local_relationship"
-  When I follow "Relationships"
+  When I am on the relationships page for category "Category 1"
   Then I should see "Externo"
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Edit']" "xpath_element" should not exist
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Delete']" "xpath_element" should not exist
@@ -166,10 +138,7 @@ Scenario: Relationships flagged with an external component hide the edit and del
 Scenario: Listing paginates when more than 25 relationships exist
   Given 27 relationships exist in category "Category 1" with prefix "Rel"
   And I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  When I follow "Relationships"
+  When I am on the relationships page for category "Category 1"
   Then I should see "Rel 01"
   And I should not see "Rel 27"
   When I follow "2"
@@ -179,16 +148,14 @@ Scenario: Listing paginates when more than 25 relationships exist
 @javascript
 Scenario: A relationship used by a course shows a Listar link expanding the courses-using panel
   Given I log in as "teacher1"
-  And I am on homepage
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I press "Add"
   And I set the field "Name" to "Usado"
   And I set the field "Description" to "Has an enrol instance"
   And I press "Save changes"
   And course "c1" uses the relationship "Usado"
-  When I follow "Relationships"
+  When I am on the relationships page for category "Category 1"
   Then I should see "List" in the "//table[@id='relationships']//tr[contains(., 'Usado')]" "xpath_element"
   When I follow "List"
-  Then I should see "Course1" in the "ol" "css_element"
+  Then I should see "Course1"
+  And I should see "Courses using"

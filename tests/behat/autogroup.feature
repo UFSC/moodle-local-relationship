@@ -6,57 +6,52 @@ Feature: Bulk group creation via autogroup
 
 Background:
   Given the following "users" exist:
-  | username | firstname | lastname | email                 |
-  | student1 | Student   |     1    | stundent1@example.com |
-  | teacher1 | Teacher   |     1    | teacher1@example.com  |
+    | username | firstname | lastname | email                 |
+    | student1 | Student   |     1    | stundent1@example.com |
+    | teacher1 | Teacher   |     1    | teacher1@example.com  |
 
   And the following "categories" exist:
-  | name       | category | idnumber |
-  | Category 1 | 0        | CAT1     |
+    | name       | category | idnumber |
+    | Category 1 | 0        | CAT1     |
 
   And the following "courses" exist:
-  | fullname | shortname | id | category |
-  | Course1  | c1        | 1  | CAT1     |
+    | fullname | shortname | id | category |
+    | Course1  | c1        | 1  | CAT1     |
 
   And the following "course enrolments" exist:
-  | user     | course | role    |
-  | student1 | c1     | student |
-  | teacher1 | c1     | teacher |
+    | user     | course | role    |
+    | student1 | c1     | student |
+    | teacher1 | c1     | teacher |
 
   And the following "permission overrides" exist:
-  | capability                | permission | role    | contextlevel | reference |
-  | local/relationship:view   | Allow      | teacher | Category     | CAT1      |
-  | local/relationship:manage | Allow      | teacher | Category     | CAT1      |
-  | local/relationship:assign | Allow      | teacher | Category     | CAT1      |
-  | moodle/cohort:view        | Allow      | teacher | Category     | CAT1      |
+    | capability                | permission | role    | contextlevel | reference |
+    | local/relationship:view   | Allow      | teacher | Category     | CAT1      |
+    | local/relationship:manage | Allow      | teacher | Category     | CAT1      |
+    | local/relationship:assign | Allow      | teacher | Category     | CAT1      |
+    | moodle/cohort:view        | Allow      | teacher | Category     | CAT1      |
 
   And the following "role assigns" exist:
-  | user     | role    | contextlevel | reference |
-  | teacher1 | teacher | Category     | CAT1      |
+    | user     | role    | contextlevel | reference |
+    | teacher1 | teacher | Category     | CAT1      |
 
-  And I log in as "admin"
-  And I follow "Courses"
-  And I follow "Category 1"
-  And I follow "Cohorts"
-  And I follow "Add new cohort"
-  And I set the field "name" to "Cohort 1"
-  And I press "Save changes"
-  And I follow "Assign"
-  And I click on the element with xpath "//table/tbody/tr/td[3]/div/select/optgroup/option[1]"
-  And I press "Add"
-  And I follow "Relationships"
-  And I press "Add"
-  And I set the field "Name" to "Teste 1"
-  And I set the field "Description" to "Description"
-  And I press "Save changes"
-  And I follow "Roles and cohorts"
-  And I press "Add"
-  And I press "Save changes"
-  And I log out
+  And the following "cohorts" exist:
+    | name     | idnumber | contextlevel | reference |
+    | Cohort 1 | COHORT1  | Category     | CAT1      |
+
+  And the following "cohort members" exist:
+    | user     | cohort  |
+    | student1 | COHORT1 |
+
+  And the following "local_relationship > relationships" exist:
+    | name    | category |
+    | Teste 1 | CAT1     |
+
+  And the following "local_relationship > relationship cohorts" exist:
+    | relationship | cohort  | role    |
+    | Teste 1      | COHORT1 | student |
+
   And I log in as "teacher1"
-  And I follow "Course1"
-  And I follow "Category 1"
-  And I follow "Relationships"
+  And I am on the relationships page for category "Category 1"
   And I follow "Groups"
 
 @javascript
