@@ -161,3 +161,34 @@ Scenario: Relationships flagged with an external component hide the edit and del
   Then I should see "Externo"
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Edit']" "xpath_element" should not exist
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Delete']" "xpath_element" should not exist
+
+@javascript
+Scenario: Listing paginates when more than 25 relationships exist
+  Given 27 relationships exist in category "Category 1" with prefix "Rel"
+  And I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  When I follow "Relacionamentos"
+  Then I should see "Rel 01"
+  And I should not see "Rel 27"
+  When I follow "2"
+  Then I should see "Rel 27"
+  And I should not see "Rel 01"
+
+@javascript
+Scenario: A relationship used by a course shows a Listar link expanding the courses-using panel
+  Given I log in as "teacher1"
+  And I am on homepage
+  And I follow "Course1"
+  And I follow "Category 1"
+  And I follow "Relacionamentos"
+  And I press "Add"
+  And I set the field "Nome" to "Usado"
+  And I set the field "Descrição" to "Has an enrol instance"
+  And I press "Save changes"
+  And course "c1" uses the relationship "Usado"
+  When I follow "Relacionamentos"
+  Then I should see "Listar" in the "//table[@id='relationships']//tr[contains(., 'Usado')]" "xpath_element"
+  When I follow "Listar"
+  Then I should see "Course1" in the "ol" "css_element"

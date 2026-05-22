@@ -58,5 +58,66 @@ class behat_relationship extends behat_base {
         $relationship = $DB->get_record('relationship', array('name' => $name), '*', MUST_EXIST);
         $DB->set_field('relationship', 'component', $component, array('id' => $relationship->id));
     }
+
+    /**
+     * Bulk-creates N relationships in the given category by direct DB insert.
+     * Used to push the listing over the 25-per-page boundary so pagination
+     * scenarios can be exercised without driving the UI 26 times.
+     *
+     * Names are generated as "<prefix> <index>" with index starting at 1.
+     *
+     * @Given /^(\d+) relationships exist in category "([^"]*)" with prefix "([^"]*)"$/
+     */
+    public function nRelationshipsExistInCategoryWithPrefix($count, $categoryname, $prefix) {
+        global $DB;
+        $category = $DB->get_record('course_categories', array('name' => $categoryname), '*', MUST_EXIST);
+        $context = context_coursecat::instance($category->id);
+        $now = time();
+        $total = (int) $count;
+        $width = max(2, strlen((string) $total));
+        for ($i = 1; $i <= $total; $i++) {
+            $DB->insert_record('relationship', (object) array(
+                'contextid' => $context->id,
+                'name' => "{$prefix} " . str_pad((string) $i, $width, '0', STR_PAD_LEFT),
+                'idnumber' => null,
+                'description' => '',
+                'descriptionformat' => FORMAT_HTML,
+                'component' => '',
+                'timecreated' => $now,
+                'timemodified' => $now,
+            ));
+        }
+    }
+
+    /**
+     * Attaches an enrol_relationship-like row so that index.php's
+     * "Cursos que utilizam o relacionamento" branch is exercised without
+     * installing the separate enrol_relationship plugin. Only the count and
+     * the join in relationship_get_courses are exercised — the enrol method
+     * itself does not have to be functional.
+     *
+     * @Given /^course "([^"]*)" uses the relationship "([^"]*)"$/
+     */
+    public function courseUsesTheRelationship($shortname, $relationshipname) {
+        global $DB;
+        $course = $DB->get_record('course', array('shortname' => $shortname), '*', MUST_EXIST);
+        $relationship = $DB->get_record('relationship', array('name' => $relationshipname), '*', MUST_EXIST);
+        $DB->insert_record('enrol', (object) array(
+            'enrol' => 'relationship',
+            'status' => 0,
+            'courseid' => $course->id,
+            'sortorder' => 0,
+            'enrolperiod' => 0,
+            'enrolstartdate' => 0,
+            'enrolenddate' => 0,
+            'expirynotify' => 0,
+            'expirythreshold' => 0,
+            'notifyall' => 0,
+            'roleid' => 0,
+            'customint1' => $relationship->id,
+            'timecreated' => time(),
+            'timemodified' => time(),
+        ));
+    }
 }
 

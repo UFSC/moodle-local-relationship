@@ -25,18 +25,20 @@ Este arquivo descreve os testes do plugin e como executá-los via Docker.
 
 ### Features atuais
 
-- `tests/behat/relationship.feature` (9 cenários) — capability checks, navegação para o link, CRUD básico de relationship, edit/cancel, **validação do nome obrigatório**, **cancel button preserva listagem**, **busca filtra por nome**, **relationship com component != null esconde edit/delete**.
+- `tests/behat/relationship.feature` (11 cenários) — capability checks, navegação para o link, CRUD básico de relationship, edit/cancel, validação do nome obrigatório, cancel button preserva listagem, busca filtra por nome, relationship com component != null esconde edit/delete, **paginação >25 com nomes zero-padded**, **link "Listar" expande painel "Cursos usando..." quando o relationship tem enrol instance**.
 - `tests/behat/relationship_cohort_groups.feature` (15 cenários) — CRUD de cohort e group, toggle `allowdupsingroups`, toggle `uniformdistribution` no group e no cohort, transferência de membro ao remover cohort, bloqueio de delete quando há cohort associado, 2 cohorts mesmo role, userlimit no group, botão "Distribuir remanescentes" ativando distribuição uniforme, **mensagem "Não há coortes disponíveis"**, **estado inicial da página de grupos**.
 - `tests/behat/assign.feature` (3 cenários) — adição manual de membro via dual selector, remoção manual, view read-only para usuário sem capability `:assign`.
 - `tests/behat/autogroup.feature` (4 cenários) — geração por número com token `#` (série numérica), por número com token `@` (série de letras A→B→C), por cohort com naming `@`/`#` em modo `value_is_a_name`, detecção de colisão no preview ("(Já existente)" em vermelho) com criação parcial dos não-conflitantes.
 
-**Total Behat:** 31 cenários, 1035 steps, ~18-22 min de execução em Selenium.
+**Total Behat:** 33 cenários, 1074 steps, ~20-25 min de execução em Selenium.
 
 ### Step custom
 
-`tests/behat/behat_relationship.php` define dois steps:
+`tests/behat/behat_relationship.php` define quatro steps:
 - `When I click on the element with xpath "..."` — atalho para click via XPath puro.
 - `Given the relationship "X" has component "Y"` — marca um relationship como gerenciado por outro componente Moodle (atualiza `relationship.component` no DB), permitindo testar a branch "cantedit" de `index.php`/`edit.php`/`edit_cohort.php`/`edit_group.php` sem instalar um plugin que efetivamente "possua" o relationship.
+- `Given N relationships exist in category "X" with prefix "Y"` — bulk-create por insert direto no DB. Nomes são zero-padded para que ordenação alfabética seja igual à numérica. Usado para empurrar a listagem além das 25 linhas por página.
+- `Given course "X" uses the relationship "Y"` — insere uma linha em `{enrol}` com `enrol='relationship'` e `customint1=relationshipid`. Permite testar o branch "Cursos usando..." em `index.php` sem o plugin `enrol_relationship` instalado.
 
 Step custom: `tests/behat/behat_relationship.php` (estende `behat_base`) — adiciona steps como `I go to "<URL>"`, `I click on the element with xpath "..."`, etc., e o setup `the following "relationships" exist`.
 
