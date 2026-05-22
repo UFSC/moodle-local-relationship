@@ -39,6 +39,25 @@ class behat_relationship extends behat_base {
     }
 
     /**
+     * Navigate directly to the relationship index for the given category,
+     * skipping the chain of UI clicks (Site home → Courses → category →
+     * Relationships) that the Moodle 3.x admin layout no longer exposes
+     * in a single label-stable path.
+     *
+     * @Given /^I am on the relationships page for category "([^"]*)"$/
+     */
+    public function iAmOnRelationshipsPageForCategory($categoryidentifier) {
+        global $DB, $CFG;
+        $category = $DB->get_record_select('course_categories',
+                'name = :name OR idnumber = :idnumber',
+                array('name' => $categoryidentifier, 'idnumber' => $categoryidentifier),
+                '*', MUST_EXIST);
+        $contextid = context_coursecat::instance($category->id)->id;
+        $url = $CFG->wwwroot . '/local/relationship/index.php?contextid=' . $contextid;
+        $this->getSession()->visit($url);
+    }
+
+    /**
      * Sets the component field of a relationship to mark it as externally
      * managed, so the UI hides the edit/delete buttons in index.php and
      * blocks edit_cohort/edit_group. Useful to test the "cantedit" branch
