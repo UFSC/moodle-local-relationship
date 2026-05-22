@@ -69,6 +69,7 @@ class local_relationship_privacy_testcase extends advanced_testcase {
         }
 
         $this->resetAfterTest();
+        writer::reset();
 
         $this->category = $this->getDataGenerator()->create_category();
         $this->catcontext = context_coursecat::instance($this->category->id);

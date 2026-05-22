@@ -49,7 +49,7 @@ class provider implements
      * @param collection $collection
      * @return collection
      */
-    public static function get_metadata(collection $collection) {
+    public static function get_metadata(collection $collection) : collection {
         $collection->add_database_table('relationship_members', array(
             'relationshipgroupid'  => 'privacy:metadata:relationship_members:relationshipgroupid',
             'relationshipcohortid' => 'privacy:metadata:relationship_members:relationshipcohortid',
@@ -68,7 +68,7 @@ class provider implements
      * @param int $userid
      * @return contextlist
      */
-    public static function get_contexts_for_userid($userid) {
+    public static function get_contexts_for_userid(int $userid) : contextlist {
         $contextlist = new contextlist();
 
         $sql = "SELECT DISTINCT r.contextid
