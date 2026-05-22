@@ -62,12 +62,13 @@ Step custom: `tests/behat/behat_relationship.php` (estende `behat_base`) — adi
 
 ## Testes PHPUnit (unitários)
 
-**Cobertura atual: 63 testes, 111 asserções, ~6s combinados.**
+**Cobertura atual: 65 testes, 127 asserções, ~6s combinados.**
 
 ### Arquivos
 
 - `tests/parse_name_test.php` — 18 testes para `relationship_groups_parse_name` (parser `@` letra / `#` número). Cobre: série A→Z→AA, formato sem token, ambos tokens (precedência de `@`), `value_is_a_name=true`, tokens em diferentes posições, múltiplas ocorrências, formato vazio.
-- `tests/crud_test.php` — 34 testes para `lib.php`. Cobre CRUD completo:
+- `tests/crud_test.php` — 36 testes para `lib.php`. Cobre CRUD completo:
+  - Múltiplos cohorts no mesmo papel (e múltiplos papéis cada um com múltiplos cohorts) coexistem no mesmo relationship — afirmação explícita de que não há unique em (relationshipid, roleid).
   - `relationship`: defaults de campos opcionais, exceção em nome ausente, trim de nome, evento `relationship_created`/`updated`/`deleted`, get com tags, delete com cascata de groups, delete bloqueado por cohorts existentes (retorno `-1`).
   - `relationship_cohorts`: timestamps automáticos, atualização de `timemodified`, get com cohort e role embarcadas, `role_name=false` quando role inexistente, listagem filtrada por relationship, **delete com transferência de members para candidate cohort** (mesmo role e cohort com o user), delete removendo member quando não há candidato com o user, descarte de duplicata quando target já tem o member, candidate ignorado quando role difere.
   - `relationship_groups`: trim de nome, exceção em relationship inexistente, evento `relationshipgroup_created`/`updated`/`deleted`, get com `size` (contagem de membros), delete em cascata sobre members.

@@ -301,6 +301,68 @@ class local_relationship_crud_testcase extends advanced_testcase {
         $this->assertFalse($rc->role_name);
     }
 
+    public function test_relationship_supports_multiple_cohorts_with_same_role() {
+        global $DB;
+
+        $rid = $this->make_relationship();
+
+        // 4 cohorts ligados ao mesmo relationship, todos no mesmo papel (student).
+        $cohorts = array($this->cohort);
+        for ($i = 0; $i < 3; $i++) {
+            $cohorts[] = $this->getDataGenerator()->create_cohort(array('contextid' => $this->catcontext->id));
+        }
+
+        $rcids = array();
+        foreach ($cohorts as $c) {
+            $rcids[] = $this->make_cohort_link($rid, array('cohortid' => $c->id));
+        }
+
+        $this->assertCount(4, $rcids);
+        foreach ($rcids as $rcid) {
+            $row = $DB->get_record('relationship_cohorts', array('id' => $rcid), '*', MUST_EXIST);
+            $this->assertEquals($this->roleid, $row->roleid);
+            $this->assertEquals($rid, $row->relationshipid);
+        }
+
+        $loaded = relationship_get_cohorts($rid);
+        $this->assertCount(4, $loaded);
+        foreach ($loaded as $rc) {
+            $this->assertEquals($this->roleid, $rc->roleid);
+        }
+    }
+
+    public function test_relationship_supports_multiple_roles_each_with_multiple_cohorts() {
+        global $DB;
+
+        $rid = $this->make_relationship();
+        $teacherrole = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+
+        // 2 cohorts no papel student, 2 no papel editingteacher.
+        $c1 = $this->getDataGenerator()->create_cohort(array('contextid' => $this->catcontext->id));
+        $c2 = $this->getDataGenerator()->create_cohort(array('contextid' => $this->catcontext->id));
+        $c3 = $this->getDataGenerator()->create_cohort(array('contextid' => $this->catcontext->id));
+        $c4 = $this->getDataGenerator()->create_cohort(array('contextid' => $this->catcontext->id));
+
+        $this->make_cohort_link($rid, array('cohortid' => $c1->id));
+        $this->make_cohort_link($rid, array('cohortid' => $c2->id));
+        $this->make_cohort_link($rid, array('cohortid' => $c3->id, 'roleid' => $teacherrole));
+        $this->make_cohort_link($rid, array('cohortid' => $c4->id, 'roleid' => $teacherrole));
+
+        $rcs = relationship_get_cohorts($rid);
+        $this->assertCount(4, $rcs);
+
+        $countbyrole = array();
+        foreach ($rcs as $rc) {
+            if (!isset($countbyrole[$rc->roleid])) {
+                $countbyrole[$rc->roleid] = 0;
+            }
+            $countbyrole[$rc->roleid]++;
+        }
+
+        $this->assertEquals(2, $countbyrole[$this->roleid]);
+        $this->assertEquals(2, $countbyrole[$teacherrole]);
+    }
+
     public function test_get_cohorts_returns_only_links_of_given_relationship() {
         $r1 = $this->make_relationship(array('name' => 'R1'));
         $r2 = $this->make_relationship(array('name' => 'R2'));
