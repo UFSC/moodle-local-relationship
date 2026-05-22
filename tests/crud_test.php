@@ -128,7 +128,7 @@ class local_relationship_crud_testcase extends advanced_testcase {
     }
 
     public function test_add_relationship_throws_when_name_missing() {
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
 
         relationship_add_relationship((object) array(
             'contextid' => $this->catcontext->id,
@@ -504,7 +504,7 @@ class local_relationship_crud_testcase extends advanced_testcase {
     }
 
     public function test_add_group_with_nonexistent_relationship_throws() {
-        $this->setExpectedException('dml_missing_record_exception');
+        $this->expectException('dml_missing_record_exception');
 
         relationship_add_group((object) array(
             'relationshipid' => 999999,
@@ -638,7 +638,7 @@ class local_relationship_crud_testcase extends advanced_testcase {
         $rc = $this->make_cohort_link($rid);
         $user = $this->getDataGenerator()->create_user();
 
-        $this->setExpectedException('dml_missing_record_exception');
+        $this->expectException('dml_missing_record_exception');
         relationship_add_member(999999, $rc, $user->id);
     }
 
