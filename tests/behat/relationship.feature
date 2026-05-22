@@ -44,7 +44,7 @@ Scenario: Students cannot navigate to the relationship page
   And I am on homepage
   Then I should not see "Category 1"
   When I follow "Course1"
-  Then I should not see "Relacionamentos"
+  Then I should not see "Relationships"
 
 @javascript
 Scenario: Admin is able to see link to relationship
@@ -52,7 +52,7 @@ Scenario: Admin is able to see link to relationship
   And I am on homepage
   And I follow "Courses"
   And I follow "Category 1"
-  Then I should see "Relacionamentos"
+  Then I should see "Relationships"
 
 @javascript
 Scenario: User with capability is able to see link to relationship
@@ -60,7 +60,7 @@ Scenario: User with capability is able to see link to relationship
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  Then I should see "Relacionamentos"
+  Then I should see "Relationships"
 
 @javascript
 Scenario: User with capability has access to the relationship creation and deletion feature
@@ -68,18 +68,18 @@ Scenario: User with capability has access to the relationship creation and delet
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  Then I should see "Adicionar novo relacionamento"
-  When I set the field "Nome" to "Teste 1"
-  And I set the field "Descrição" to "Descrição"
+  Then I should see "Add new relationship"
+  When I set the field "Name" to "Teste 1"
+  And I set the field "Description" to "Description"
   And I press "Save changes"
   Then I should see "Teste 1" in the "td" "css_element"
-  And I should see "Criado manualmente"
+  And I should see "Manually created"
   When I follow "Delete"
   And I press "Continue"
   Then I should not see "Teste 1" in the "td" "css_element"
-  And I should not see "criado manualmente"
+  And I should not see "manually created"
 
 @javascript
 Scenario: User with capability has access to the relationship edition features
@@ -87,19 +87,19 @@ Scenario: User with capability has access to the relationship edition features
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Teste 1"
-  And I set the field "Descrição" to "Descrição"
+  And I set the field "Name" to "Teste 1"
+  And I set the field "Description" to "Description"
   And I press "Save changes"
   When I follow "Edit"
-  Then I should see "Editar relacionamento"
+  Then I should see "Edit relationship"
   When I press "Cancel"
-  And I follow "Papeis e coortes"
-  Then I should see "Papeis e coortes"
-  When I follow "Relacionamentos"
+  And I follow "Roles and cohorts"
+  Then I should see "Roles and cohorts"
+  When I follow "Relationships"
   When I follow "Groups"
-  Then I should see "Grupos" in the "h4" "css_element"
+  Then I should see "Groups" in the "h4" "css_element"
 
 @javascript
 Scenario: Submitting a new relationship without a name keeps the user on the edit form
@@ -107,11 +107,11 @@ Scenario: Submitting a new relationship without a name keeps the user on the edi
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  When I set the field "Descrição" to "Sem nome"
+  When I set the field "Description" to "Sem nome"
   And I press "Save changes"
-  Then I should see "Adicionar novo relacionamento"
+  Then I should see "Add new relationship"
 
 @javascript
 Scenario: Cancel on the relationship edit form returns to the listing without persisting
@@ -119,9 +119,9 @@ Scenario: Cancel on the relationship edit form returns to the listing without pe
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Nao persistido"
+  And I set the field "Name" to "Nao persistido"
   When I press "Cancel"
   Then I should not see "Nao persistido"
 
@@ -131,17 +131,17 @@ Scenario: Search filters the relationships listing by name
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Alpha"
-  And I set the field "Descrição" to "A"
+  And I set the field "Name" to "Alpha"
+  And I set the field "Description" to "A"
   And I press "Save changes"
   And I press "Add"
-  And I set the field "Nome" to "Beta"
-  And I set the field "Descrição" to "B"
+  And I set the field "Name" to "Beta"
+  And I set the field "Description" to "B"
   And I press "Save changes"
   When I set the field "relationship_search_q" to "Alpha"
-  And I press "Buscar"
+  And I press "Search"
   Then I should see "Alpha"
   And I should not see "Beta"
 
@@ -151,13 +151,13 @@ Scenario: Relationships flagged with an external component hide the edit and del
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Externo"
-  And I set the field "Descrição" to "Owned by another plugin"
+  And I set the field "Name" to "Externo"
+  And I set the field "Description" to "Owned by another plugin"
   And I press "Save changes"
   And the relationship "Externo" has component "local_relationship"
-  When I follow "Relacionamentos"
+  When I follow "Relationships"
   Then I should see "Externo"
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Edit']" "xpath_element" should not exist
   And "//table[@id='relationships']//tr[contains(., 'Externo')]//img[@alt='Delete']" "xpath_element" should not exist
@@ -169,7 +169,7 @@ Scenario: Listing paginates when more than 25 relationships exist
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  When I follow "Relacionamentos"
+  When I follow "Relationships"
   Then I should see "Rel 01"
   And I should not see "Rel 27"
   When I follow "2"
@@ -182,13 +182,13 @@ Scenario: A relationship used by a course shows a Listar link expanding the cour
   And I am on homepage
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Usado"
-  And I set the field "Descrição" to "Has an enrol instance"
+  And I set the field "Name" to "Usado"
+  And I set the field "Description" to "Has an enrol instance"
   And I press "Save changes"
   And course "c1" uses the relationship "Usado"
-  When I follow "Relacionamentos"
-  Then I should see "Listar" in the "//table[@id='relationships']//tr[contains(., 'Usado')]" "xpath_element"
-  When I follow "Listar"
+  When I follow "Relationships"
+  Then I should see "List" in the "//table[@id='relationships']//tr[contains(., 'Usado')]" "xpath_element"
+  When I follow "List"
   Then I should see "Course1" in the "ol" "css_element"

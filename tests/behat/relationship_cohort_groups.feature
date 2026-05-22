@@ -46,33 +46,33 @@ Background:
   And I follow "Assign"
   And I click on the element with xpath "//table/tbody/tr/td[3]/div/select/optgroup/option[1]"
   And I press "Add"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I press "Add"
-  And I set the field "Nome" to "Teste 1"
-  And I set the field "Descrição" to "Descrição"
+  And I set the field "Name" to "Teste 1"
+  And I set the field "Description" to "Description"
   And I press "Save changes"
-  And I follow "Papeis e coortes"
+  And I follow "Roles and cohorts"
   And I press "Add"
   And I press "Save changes"
   And I log out
   And I log in as "teacher1"
   And I follow "Course1"
   And I follow "Category 1"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
 
 @javascript
 Scenario: User with capability is able to edit a cohort in a relationship
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   Then I should see "No" in the "//table[@id='relationships']/tbody//td[4]" "xpath_element"
   When I follow "Edit"
-  Then I should see "Editar papel/coorte"
+  Then I should see "Edit role/cohort"
   When I select "Yes" from the "id_allowdupsingroups" singleselect
   And I press "Save changes"
   Then I should see "Yes" in the "//table[@id='relationships']/tbody//td[4]" "xpath_element"
 
 @javascript
 Scenario: User with capability is able to delete cohort from a relationship
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   Then I should see "Cohort 1" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
   When I follow "Delete"
   And I press "Continue"
@@ -82,29 +82,29 @@ Scenario: User with capability is able to delete cohort from a relationship
 Scenario: User with capability is able to create groups in a relationship
   When I follow "Groups"
   Then I should see "" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
-  When I press "Adicionar novo grupo"
-  And I set the field "Nome do Grupo" to "Grupo teste"
+  When I press "Add new group"
+  And I set the field "Group name" to "Grupo teste"
   And I press "Save changes"
   Then I should see "Grupo teste" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
 
 @javascript
 Scenario: User with capability is able to edit groups in a relationship
   When I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And I set the field "Nome do Grupo" to "Grupo teste"
+  And I press "Add new group"
+  And I set the field "Group name" to "Grupo teste"
   And I press "Save changes"
   Then I should see "Grupo teste" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
   When I follow "Edit"
-  Then I should see "Editar grupo"
-  When  I set the field "Nome do Grupo" to "Teste"
+  Then I should see "Edit group"
+  When  I set the field "Group name" to "Teste"
   And I press "Save changes"
   Then I should see "Teste" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
 
 @javascript
 Scenario: User with capability is able to remove groups from a relationship
   When I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And  I set the field "Nome do Grupo" to "Grupo teste"
+  And I press "Add new group"
+  And  I set the field "Group name" to "Grupo teste"
   And I press "Save changes"
   Then I should see "Grupo teste" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
   When I follow "Delete"
@@ -114,36 +114,36 @@ Scenario: User with capability is able to remove groups from a relationship
 @javascript
 Scenario: Changes made to groups are shown to user
   When I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And I set the field "Nome do Grupo" to "Grupo teste"
+  And I press "Add new group"
+  And I set the field "Group name" to "Grupo teste"
   And I press "Save changes"
   Then I should see "No" in the "//table[@id='relationships']/tbody//td[4]" "xpath_element"
-  When I follow "ativar"
+  When I follow "enable"
   Then I should see "Yes" in the "//table[@id='relationships']/tbody//td[4]" "xpath_element"
 
 
 @javascript
 Scenario: Removing a cohort with an enrolled user
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   Then I should not see "Cohort 2"
   When I press "Add"
   And I press "Save changes"
   Then I should see "Cohort 2"
-  When I follow "Relacionamentos"
+  When I follow "Relationships"
   And I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And I set the field "Nome" to "Grupo 1"
+  And I press "Add new group"
+  And I set the field "Group name" to "Grupo 1"
   And I press "Save changes"
-  And I follow "Atribuir"
+  And I follow "Assign"
   And I click on "//table/tbody/tr/td[3]/div/select/optgroup/option[1]" "xpath_element"
   And I press "Add"
-  And I follow "Grupos"
+  And I follow "Groups"
   Then I should see "1" in the "//table/tbody/tr[1]/td[2]" "xpath_element"
-  When I follow "Relacionamentos"
-  And I follow "Papeis e coortes"
+  When I follow "Relationships"
+  And I follow "Roles and cohorts"
   And I follow "Delete"
   And I press "Continue"
-  And I follow "Relacionamentos"
+  And I follow "Relationships"
   And I follow "Groups"
   Then I should see "0" in the "//table/tbody/tr[1]/td[2]" "xpath_element"
 
@@ -159,14 +159,14 @@ Scenario: Editing a relationship's parameters
   Then I should see "Teste 1"
   And I should not see "Novo nome"
   When I follow "Edit"
-  And I set the field "Nome" to "Novo nome"
+  And I set the field "Name" to "Novo nome"
   And I press "Save changes"
   Then I should see "Novo nome"
   And I should not see "Teste 1"
 
 @javascript
 Scenario: Two cohorts can be attached to the same relationship with the same role
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   Then I should see "Cohort 1" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
   And I should not see "Cohort 2"
   When I press "Add"
@@ -177,48 +177,48 @@ Scenario: Two cohorts can be attached to the same relationship with the same rol
 @javascript
 Scenario: The user limit per role can be set on a group and is shown on the groups list
   When I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And I set the field "Nome do Grupo" to "Grupo limitado"
-  And I set the field "Limite de usuários por papel" to "5"
+  And I press "Add new group"
+  And I set the field "Group name" to "Grupo limitado"
+  And I set the field "User limit per role" to "5"
   And I press "Save changes"
   Then I should see "Grupo limitado" in the "//table[@id='relationships']/tbody//td[1]" "xpath_element"
   And I should see "5" in the "//table[@id='relationships']/tbody//td[3]" "xpath_element"
 
 @javascript
 Scenario: Toggling uniformdistribution on a cohort is persisted and shown on the cohorts list
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   Then I should see "No" in the "//table[@id='relationships']/tbody//tr[1]/td[5]" "xpath_element"
   When I follow "Edit"
-  Then I should see "Editar papel/coorte"
+  Then I should see "Edit role/cohort"
   When I select "Yes" from the "id_uniformdistribution" singleselect
   And I press "Save changes"
   Then I should see "Yes" in the "//table[@id='relationships']/tbody//tr[1]/td[5]" "xpath_element"
 
 @javascript
 Scenario: A "no cohorts available" message appears when every cohort is already linked
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   And I press "Add"
   And I press "Save changes"
-  Then I should see "Não há coortes disponíveis para adição neste relacionamento."
+  Then I should see "There are no cohorts available to add to this relationship."
 
 @javascript
 Scenario: A fresh relationship lands on the groups page with the add buttons visible
   When I follow "Groups"
-  Then "Adicionar novo grupo" "button" should exist
-  And "Adicionar vários grupos" "button" should exist
+  Then "Add new group" "button" should exist
+  And "Add multiple groups" "button" should exist
 
 @javascript
 Scenario: Pressing distribute-remaining moves cohort members into uniformdistribution groups
-  When I follow "Papeis e coortes"
+  When I follow "Roles and cohorts"
   And I follow "Edit"
   And I select "Yes" from the "id_uniformdistribution" singleselect
   And I press "Save changes"
   Then I should see "Yes" in the "//table[@id='relationships']/tbody//tr[1]/td[5]" "xpath_element"
-  When I follow "Relacionamentos"
+  When I follow "Relationships"
   And I follow "Groups"
-  And I press "Adicionar novo grupo"
-  And I set the field "Nome do Grupo" to "Grupo uniforme"
+  And I press "Add new group"
+  And I set the field "Group name" to "Grupo uniforme"
   And I press "Save changes"
-  And I follow "ativar"
-  And I press "Distribuir remanescentes"
+  And I follow "enable"
+  And I press "Distribute remaining"
   Then I should see "1" in the "//table[@id='relationships']/tbody//td[2]" "xpath_element"

@@ -22,6 +22,7 @@ Este arquivo descreve os testes do plugin e como executá-los via Docker.
 **Container Selenium:** `selenium-chrome-unasuscp` (compartilhado entre plugins do mesmo `CORE_NAME`)
 **URL base:** `http://local-unasus-cp.moodle.ufsc.br`
 **Tag padrão:** `@local_relationship`
+**Idioma do site Behat:** inglês (default Moodle) — todas as asserções batem com `lang/en/local_relationship.php`. Para reproduzir em uma instalação em português, é só trocar o idioma do site test (não recomendado: requer manter dois conjuntos de assertions).
 
 ### Features atuais
 
