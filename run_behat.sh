@@ -404,7 +404,7 @@ fi
 # ---------------------------------------------------------------------------
 # 5. Inicializar (ou reinicializar) o ambiente Behat
 # ---------------------------------------------------------------------------
-BEHAT_YML="$BEHAT_DATAROOT/behat/behat.yml"
+BEHAT_YML="$BEHAT_DATAROOT/behatrun/behat/behat.yml"
 
 # Probe: se behat.yml existe mas as tabelas foram dropadas (ex.: --drop em run
 # anterior), util.php --enable responde "Install Behat before enabling it". Sem
@@ -484,7 +484,7 @@ log "  Título da página: ${DIAG_TITLE:-(sem título / página em branco)}"
 DIAG_STATUS=$(docker exec "$SELENIUM_CONTAINER" bash -c "curl -so /dev/null -w '%{http_code}' --max-time 10 'http://$URL_NAME/'" 2>/dev/null || echo "???")
 log "  HTTP status: $DIAG_STATUS"
 
-BEHAT_CMD="cd '$MOODLE_ROOT_IN_CONTAINER' && vendor/bin/behat --config='$BEHAT_YML' --ansi"
+BEHAT_CMD="cd '$MOODLE_ROOT_IN_CONTAINER' && vendor/bin/behat --config='$BEHAT_YML'"
 EXTRA_ARGS_ESCAPED="$(build_escaped_args "${BEHAT_EXTRA_ARGS[@]}")"
 
 if [ -n "$FEATURE_FILE" ]; then
