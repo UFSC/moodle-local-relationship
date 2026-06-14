@@ -64,6 +64,7 @@ MOODLE_LOCAL_SITE="www/$SISTEM_NAME"
 MOODLE_ROOT_IN_CONTAINER="/home/moodle/$MOODLE_LOCAL_SITE"
 DOCKER_NETWORK="moodle-network-$DOCKER_VERSION"
 BEHAT_DATAROOT="/home/moodle/moodledata/${BEHAT_PREFIX}$SISTEM_NAME"
+BEHAT_FAILDUMP="${BEHAT_DATAROOT}_faildump"
 BEHAT_WWWROOT="http://$URL_NAME"
 BEHAT_ENABLE_FILE="/tmp/.${BEHAT_PREFIX}${SISTEM_NAME}_enabled"
 PLUGIN_TAG="${PLUGIN_TAG:-@$PLUGIN_COMPONENT}"
@@ -108,6 +109,19 @@ enable_behat_environment() {
     log "Ativando configuração Behat para esta execução..."
     docker exec -u 0 "$CONTAINER_NAME" bash -c "mkdir -p /home/moodle/moodledata && chown moodle:moodle /home/moodle/moodledata && chmod 755 /home/moodle/moodledata"
     exec_as_moodle "mkdir -p '$BEHAT_DATAROOT' && touch '$BEHAT_ENABLE_FILE' && rm -f '$BEHAT_DATAROOT/.behat_enabled'"
+
+    # Garantir que o diretório de faildump exista e seja gravável. O hook
+    # behat_hooks::before_suite() aborta a suíte INTEIRA com "non-writable
+    # directory" se $CFG->behat_faildump_path apontar para um dir inexistente.
+    # Extração espelha a do behat_dataroot (sem backreferences, à prova de aspas).
+    local faildump
+    faildump=$(exec_as_moodle "grep -v '^[[:space:]]*//' '$MOODLE_ROOT_IN_CONTAINER/config.php' | grep 'behat_faildump_path' | grep -o \"'[^']*'\" | tr -d \"'\" | head -1" 2>/dev/null || true)
+    if [ -n "$faildump" ]; then
+        log "Garantindo diretório de faildump: $faildump"
+        exec_as_moodle "mkdir -p '$faildump'"
+    else
+        warn "Não foi possível extrair behat_faildump_path do config.php; pulando criação do diretório de faildump."
+    fi
 }
 
 disable_behat_environment() {
@@ -126,7 +140,12 @@ ensure_behat_test_mode_enabled() {
 }
 
 cleanup() {
+    # Captura o código de saída em vigor ANTES de qualquer comando de limpeza,
+    # senão o status do último comando do trap mascararia uma falha do behat
+    # (ex.: o rm -f de disable_behat_environment retorna 0).
+    local rc=$?
     disable_behat_environment
+    exit "$rc"
 }
 
 trap cleanup EXIT
@@ -299,6 +318,7 @@ if [ "$BEHAT_CONFIGURED" != "yes" ]; then
 \\\$CFG->behat_wwwroot  = '$BEHAT_WWWROOT';\\
 \\\$CFG->behat_prefix   = '$BEHAT_PREFIX';\\
 \\\$CFG->behat_dataroot = '$BEHAT_DATAROOT';\\
+\\\$CFG->behat_faildump_path = '$BEHAT_FAILDUMP';\\
 \\\$CFG->behat_config   = array(\\
     'default' => array(\\
         'extensions' => array(\\
@@ -361,6 +381,20 @@ if [ "$BEHAT_WWWROOT_STALE" = "yes" ]; then
     exec_as_moodle "sed -i 's|http://$CONTAINER_NAME|$BEHAT_WWWROOT|g' '$MOODLE_ROOT_IN_CONTAINER/config.php'"
     log "behat_wwwroot corrigido para '$BEHAT_WWWROOT'. Forçando reinicialização do Behat..."
     INIT_FLAG="yes"
+fi
+
+# Auto-correção 4: ambiente Behat inicializado para outra versão/build do Moodle.
+# util.php --enable emite "initialised for a different version" / "Reinstall Behat"
+# quando o build mudou (ex.: upgrade do Moodle ou outro plugin rodou o init antes).
+# Sem isto, a execução aborta pedindo `php init.php`; aqui forçamos o init sozinhos.
+# (Só faz sentido quando o ambiente já existe; a primeira inicialização é tratada
+# pelo branch "test -f BEHAT_YML" logo abaixo.)
+if [ -z "$INIT_FLAG" ] && exec_as_moodle "test -f '$BEHAT_DATAROOT/behat/behat.yml'" 2>/dev/null; then
+    BEHAT_VERSION_PROBE=$(exec_php_as_moodle_for_init "MOODLE_SKIP_COMPOSER_SELF_UPDATE=1 USE_ZEND_ALLOC=0 php -d memory_limit=512M '$MOODLE_ROOT_IN_CONTAINER/admin/tool/behat/cli/util.php' --enable 2>&1 || true")
+    if echo "$BEHAT_VERSION_PROBE" | grep -qiE 'different version|Reinstall Behat'; then
+        warn "Ambiente Behat inicializado para outra versão do Moodle. Forçando reinicialização..."
+        INIT_FLAG="yes"
+    fi
 fi
 
 # ---------------------------------------------------------------------------
