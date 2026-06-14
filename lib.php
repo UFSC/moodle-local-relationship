@@ -273,7 +273,7 @@ function relationship_add_relationship($relationship) {
 
     if ($result) {
         $relationship->id = $result;
-        tag_set('relationship', $relationship->id, $relationship->tags);
+        tag_set('relationship', $relationship->id, $relationship->tags, 'local_relationship', $relationship->contextid);
 
         $event = \local_relationship\event\relationship_created::create(array(
                 'context' => context::instance_by_id($relationship->contextid),
@@ -301,7 +301,7 @@ function relationship_update_relationship($relationship) {
     $result = $DB->update_record('relationship', $relationship);
 
     if ($result) {
-        tag_set('relationship', $relationship->id, $relationship->tags);
+        tag_set('relationship', $relationship->id, $relationship->tags, 'local_relationship', $relationship->contextid);
 
         $event = \local_relationship\event\relationship_updated::create(array(
                 'context' => context::instance_by_id($relationship->contextid),
