@@ -1,0 +1,7 @@
+# Cascade de branches/mirrors deste projeto. Veja `moodle-cascade --help`.
+# Dois mirrors distintos: GitLab UFSC (origin_ufsc) + GitHub UFSC (stream).
+# `origin` é HTTPS para o MESMO repo que `stream`, então fica de fora.
+remotes = origin_ufsc stream
+
+# Este projeto também mantém o 3.1 (não faz parte da cadeia-padrão do command).
+chain_extra = MOODLE_31_STABLE
